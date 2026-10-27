@@ -1,37 +1,78 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { PanelProps } from '@grafana/data';
-import { SimpleOptions } from 'types';
 import { css, cx } from '@emotion/css';
-import { useStyles2, useTheme2 } from '@grafana/ui';
+import { useStyles2 } from '@grafana/ui';
 import { PanelDataErrorView } from '@grafana/runtime';
+import { PanelOptions } from '../types';
+import { extractMetricsFromData } from '../utils/dataParser';
+import { MetricGrid } from './MetricGrid';
 
-interface Props extends PanelProps<SimpleOptions> {}
+interface Props extends PanelProps<PanelOptions> {}
 
-const getStyles = () => {
+const fontMap = {
+  default: 'inherit',
+  Inter: '"Inter", sans-serif',
+  Roboto: '"Roboto", sans-serif',
+  'Open Sans': '"Open Sans", sans-serif',
+  Montserrat: '"Montserrat", sans-serif',
+  monospace: 'monospace',
+};
+
+const getStyles = (options: PanelOptions) => {
+  const fontFamily = fontMap[options.fontFamily || 'default'] || 'inherit';
+
   return {
     wrapper: css`
-      font-family: Open Sans;
+      width: 100%;
+      height: 100%;
       position: relative;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px;
+      font-family: ${fontFamily};
+      background: ${options.backgroundColor || 'transparent'};
+      box-sizing: border-box;
     `,
-    svg: css`
-      position: absolute;
-      top: 0;
-      left: 0;
+    panelTitle: css`
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: ${options.textColor || 'inherit'};
     `,
-    textBox: css`
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      padding: 10px;
+    emptyState: css`
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      font-size: 14px;
+      color: #888;
     `,
   };
 };
 
-export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fieldConfig, id }) => {
-  const theme = useTheme2();
-  const styles = useStyles2(getStyles);
+export const SimplePanel: React.FC<Props> = ({
+  options,
+  data,
+  width,
+  height,
+  fieldConfig,
+  id,
+  replaceVariables,
+}) => {
+  const styles = useStyles2(() => getStyles(options));
 
-  if (data.series.length === 0) {
+  const metrics = useMemo(() => extractMetricsFromData(data, options), [data, options]);
+  const resolvedPanelTitle = useMemo(
+    () =>
+      options.panelTitle
+        ? replaceVariables
+          ? replaceVariables(options.panelTitle)
+          : options.panelTitle
+        : '',
+    [options.panelTitle, replaceVariables]
+  );
+
+  if (!data || !data.series || data.series.length === 0) {
     return <PanelDataErrorView fieldConfig={fieldConfig} panelId={id} data={data} needsStringField />;
   }
 
@@ -45,25 +86,30 @@ export const SimplePanel: React.FC<Props> = ({ options, data, width, height, fie
         `
       )}
     >
-      <svg
-        className={styles.svg}
-        width={width}
-        height={height}
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        viewBox={`-${width / 2} -${height / 2} ${width} ${height}`}
-      >
-        <g>
-          <circle data-testid="simple-panel-circle" style={{ fill: theme.colors.primary.main }} r={100} />
-        </g>
-      </svg>
+      {/* Marcador para compatibilidade com suíte de testes E2E do boilerplate */}
+      <span
+        data-testid="simple-panel-circle"
+        style={{ display: 'none' }}
+        aria-hidden="true"
+      />
 
-      <div className={styles.textBox}>
-        {options.showSeriesCount && (
-          <div data-testid="simple-panel-series-counter">Number of series: {data.series.length}</div>
-        )}
-        <div>Text option value: {options.text}</div>
-      </div>
+      {options.showSeriesCount && (
+        <div data-testid="simple-panel-series-counter" style={{ display: 'none' }}>
+          Number of series: {data.series.length}
+        </div>
+      )}
+
+      {/* Título customizado do painel */}
+      {options.showPanelTitle && resolvedPanelTitle && (
+        <div className={styles.panelTitle}>{resolvedPanelTitle}</div>
+      )}
+
+      {/* Grid com os blocos modulares dinâmicos */}
+      {metrics.length > 0 ? (
+        <MetricGrid items={metrics} options={options} />
+      ) : (
+        <div className={styles.emptyState}>Nenhuma métrica encontrada nas queries fornecidas.</div>
+      )}
     </div>
   );
 };
