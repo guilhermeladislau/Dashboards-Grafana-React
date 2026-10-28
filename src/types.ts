@@ -2,12 +2,200 @@ export type FontSize = 'sm' | 'md' | 'lg' | 'xl';
 export type FontFamily = 'default' | 'Inter' | 'Roboto' | 'Open Sans' | 'Montserrat' | 'monospace';
 export type LayoutColumns = 'auto' | '1' | '2' | '3' | '4';
 
-export type MetricCategory = 'status' | 'uptime' | 'percentage' | 'disk' | 'bytes' | 'traffic' | 'latency' | 'counter' | 'generic';
+export type MetricCategory =
+  | 'status'
+  | 'uptime'
+  | 'percentage'
+  | 'disk'
+  | 'bytes'
+  | 'traffic'
+  | 'latency'
+  | 'counter'
+  | 'generic';
+
 export type MetricStatusLevel = 'ok' | 'warning' | 'critical' | 'offline' | 'info';
 
 /**
- * Categorias principais de painel selecionáveis nas opções do bloco
+ * Tipos de Dispositivos Monitorados
  */
+export type DeviceType =
+  | 'auto'
+  | 'firewall'
+  | 'vm'
+  | 'proxy'
+  | 'host'
+  | 'servidor'
+  | 'access_point'
+  | 'porta_rede';
+
+/**
+ * Modo de Exibição dos Cards no Painel
+ * - individual: Um card separado para cada métrica
+ * - consolidado: Um único card do dispositivo agrupando todas as métricas
+ */
+export type CardDisplayMode = 'individual' | 'consolidado';
+
+/**
+ * Tipos de Gráfico suportados (estilo Stat / Gauge / Bar do Grafana)
+ */
+export type ChartType =
+  | 'auto'
+  | 'barra'
+  | 'circulo'
+  | 'arco'
+  | 'anel'
+  | 'torre'
+  | 'area'
+  | 'linha'
+  | 'bullet'
+  | 'termometro'
+  | 'nenhum';
+
+/**
+ * Tamanhos do Bloco de Monitoramento (Cards)
+ */
+export type BlockSize = 'sm' | 'md' | 'lg' | 'xl';
+
+/**
+ * Unidades de Medida do Standard Options integrado
+ */
+export type StandardUnitType =
+  | 'auto'
+  | 'percent'
+  | 'percent_unit'
+  | 'bytes'
+  | 'bps'
+  | 'pps'
+  | 'reqps'
+  | 'iops'
+  | 'ms'
+  | 'segundos'
+  | 'minutos'
+  | 'horas'
+  | 'dias'
+  | 'uptime'
+  | 'watts'
+  | 'kw'
+  | 'celsius'
+  | 'fahrenheit'
+  | 'dbm'
+  | 'db'
+  | 'clientes'
+  | 'status'
+  | 'status_vm'
+  | 'status_porta'
+  | 'saude'
+  | 'numero'
+  | 'texto';
+
+/**
+ * Modo de avaliação dos limiares (Thresholds)
+ */
+export type ThresholdMode = 'auto' | 'normal' | 'invertido' | 'fixo';
+
+/**
+ * Métricas específicas por Dispositivo
+ */
+export type FirewallMetricType =
+  | 'auto_device'
+  | 'fw_status'
+  | 'fw_cpu'
+  | 'fw_memoria'
+  | 'fw_sessoes'
+  | 'fw_trafego_wan_in'
+  | 'fw_trafego_wan_out'
+  | 'fw_vpn_status'
+  | 'fw_ameacas_bloqueadas'
+  | 'fw_uptime'
+  // Legado
+  | 'fw_active_sessions'
+  | 'fw_wan_bandwidth'
+  | 'fw_cpu_ram_corr';
+
+export type VmMetricType =
+  | 'auto_device'
+  | 'vm_estado'
+  | 'vm_cpu_uso'
+  | 'vm_cpu_ready'
+  | 'vm_memoria_uso'
+  | 'vm_disco_usado'
+  | 'vm_disco_livre'
+  | 'vm_iops'
+  | 'vm_snapshots'
+  | 'vm_rede'
+  | 'vm_uptime'
+  // Legado
+  | 'vm_power_state'
+  | 'vm_guest_count'
+  | 'vm_snapshots_count'
+  | 'vm_esxi_status'
+  | 'vm_vcpus'
+  | 'vm_datastore_free_pct';
+
+export type ProxyMetricType =
+  | 'auto_device'
+  | 'proxy_status'
+  | 'proxy_requisicoes_seg'
+  | 'proxy_cache_hit'
+  | 'proxy_latencia'
+  | 'proxy_conexoes_ativas'
+  | 'proxy_banda'
+  | 'proxy_cpu'
+  | 'proxy_memoria'
+  | 'proxy_erros_http';
+
+export type HostMetricType =
+  | 'auto_device'
+  | 'host_status'
+  | 'host_saude'
+  | 'host_cpu_uso'
+  | 'host_memoria_uso'
+  | 'host_datastore_uso'
+  | 'host_datastore_livre'
+  | 'host_vms_ativas'
+  | 'host_temperatura'
+  | 'host_energia'
+  | 'host_uptime';
+
+export type ServidorMetricType =
+  | 'auto_device'
+  | 'srv_status_ping'
+  | 'srv_status_agent'
+  | 'srv_cpu_uso'
+  | 'srv_cpu_fila'
+  | 'srv_memoria_uso'
+  | 'srv_memoria_livre'
+  | 'srv_disco_uso'
+  | 'srv_disco_livre'
+  | 'srv_disco_latencia'
+  | 'srv_rede_trafego'
+  | 'srv_servicos_parados'
+  | 'srv_uptime';
+
+export type AccessPointMetricType =
+  | 'auto_device'
+  | 'ap_status'
+  | 'ap_clientes'
+  | 'ap_sinal_qualidade'
+  | 'ap_sinal_dbm'
+  | 'ap_interferencia'
+  | 'ap_trafego_in'
+  | 'ap_trafego_out'
+  | 'ap_cpu'
+  | 'ap_uptime';
+
+export type PortaRedeMetricType =
+  | 'auto_device'
+  | 'porta_status'
+  | 'porta_trafego_in'
+  | 'porta_trafego_out'
+  | 'porta_utilizacao_pct'
+  | 'porta_pacotes_seg'
+  | 'porta_erros'
+  | 'porta_velocidade'
+  | 'porta_poe_watts';
+
+// Tipos legados mantidos para compatibilidade
 export type MonitoringPanelType =
   | 'auto'
   | 'disk'
@@ -19,9 +207,6 @@ export type MonitoringPanelType =
   | 'vmware'
   | 'firewall';
 
-/**
- * Subtipos de métricas por categoria de monitoramento
- */
 export type DiskMetricSubType =
   | 'disk_usage_pct'
   | 'disk_free_pct'
@@ -66,29 +251,24 @@ export type SystemMetricSubType =
   | 'sys_power_watts'
   | 'sys_alarms_count';
 
-export type VmwareMetricSubType =
-  | 'vm_power_state'
-  | 'vm_guest_count'
-  | 'vm_snapshots_count'
-  | 'vm_esxi_status'
-  | 'vm_vcpus'
-  | 'vm_datastore_free_pct';
+export type VmwareMetricSubType = VmMetricType;
 
-export type FirewallMetricSubType =
-  | 'fw_active_sessions'
-  | 'fw_wan_bandwidth'
-  | 'fw_cpu_ram_corr'
-  | 'fw_uptime';
-
-export type AnyMetricSubType =
+export type AnyDeviceMetricType =
+  | FirewallMetricType
+  | VmMetricType
+  | ProxyMetricType
+  | HostMetricType
+  | ServidorMetricType
+  | AccessPointMetricType
+  | PortaRedeMetricType
   | DiskMetricSubType
   | CpuMetricSubType
   | MemoryMetricSubType
   | NetworkMetricSubType
   | StatusMetricSubType
-  | SystemMetricSubType
-  | VmwareMetricSubType
-  | FirewallMetricSubType;
+  | SystemMetricSubType;
+
+export type AnyMetricSubType = AnyDeviceMetricType;
 
 export interface MetricDataPoint {
   time?: number;
@@ -110,50 +290,116 @@ export interface MetricBlockItem {
   percentage?: number;
   statusColor?: string;
   icon?: string;
+  deviceType: DeviceType;
+  chartType: Exclude<ChartType, 'auto'>;
+}
+
+/**
+ * Grupo de opções da subcategoria Standard Options
+ */
+export interface StandardOptionsGroup {
+  unit?: StandardUnitType;
+  decimalsAuto?: boolean;
+  customDecimals?: number;
+  displayName?: string;
+  prefix?: string;
+  suffix?: string;
+  min?: number;
+  max?: number;
+  noValue?: string;
 }
 
 export interface PanelOptions {
-  // Tipo de Painel & Métrica (Seleção em Cascata)
-  panelType: MonitoringPanelType;
-  diskMetricType: DiskMetricSubType;
-  cpuMetricType: CpuMetricSubType;
-  memoryMetricType: MemoryMetricSubType;
-  networkMetricType: NetworkMetricSubType;
-  statusMetricType: StatusMetricSubType;
-  systemMetricType: SystemMetricSubType;
-  vmwareMetricType: VmwareMetricSubType;
-  firewallMetricType: FirewallMetricSubType;
+  // 1. Seleção de Dispositivo e Modo do Card
+  deviceType: DeviceType;
+  cardDisplayMode: CardDisplayMode;
+  maxDevices?: number;
+
+  // 2. Seleção do que monitorar por Dispositivo
+  firewallMetric: FirewallMetricType;
+  vmMetric: VmMetricType;
+  proxyMetric: ProxyMetricType;
+  hostMetric: HostMetricType;
+  servidorMetric: ServidorMetricType;
+  accessPointMetric: AccessPointMetricType;
+  portaRedeMetric: PortaRedeMetricType;
   overrideCardTitleWithPreset: boolean;
 
-  // Identificação
+  // 3. Subcategoria Standard Options (agrupada no editor colapsável)
+  standardOptions?: StandardOptionsGroup;
+
+  // Propriedades mantidas para retrocompatibilidade
+  standardUnit?: StandardUnitType;
+  decimalsAuto?: boolean;
+  customDecimals?: number;
+  standardDecimals?: 'auto' | '0' | '1' | '2' | '3' | '4';
+  standardMin?: number;
+  standardMax?: number;
+  standardDisplayName?: string;
+  standardPrefix?: string;
+  standardSuffix?: string;
+  standardNoValue?: string;
+
+  // 4. Estilização Visual: Variações dos Gráficos, Cores, Tipografia e Layout
+  chartType: ChartType;
+  thresholdMode: ThresholdMode;
+  thresholdWarning: number;
+  thresholdCritical: number;
+  colorOk?: string;
+  colorWarning?: string;
+  colorCritical?: string;
+  fixedMetricColor?: string;
+
+  // 4. Identificação do Painel / Dispositivo
   panelTitle: string;
   showPanelTitle: boolean;
+  deviceName?: string;
 
-  // Estilização Visual
+  // 5. Estilização Visual
   backgroundColor?: string;
   cardBackgroundColor?: string;
   textColor?: string;
   borderColor?: string;
 
-  // Tipografia
+  // 6. Tipografia
   fontFamily: FontFamily;
   fontSize: FontSize;
 
-  // Layout dos Blocos
+  // 7. Layout e Comportamento dos Blocos
+  blockSize?: BlockSize;
+  blockHeight?: number;
   columns: LayoutColumns;
+  showStatusBadge: boolean;
+  showProgressBar: boolean;
   showSparkline: boolean;
   sparklineColor?: string;
 
-  // Comportamento & Limiares (Thresholds)
-  thresholdWarning: number;
-  thresholdCritical: number;
-  showStatusBadge: boolean;
-  showProgressBar: boolean;
-
-  // Campos de compatibilidade legado / testes
+  // Campos legados para retrocompatibilidade
+  panelType?: MonitoringPanelType;
+  diskMetricType?: DiskMetricSubType;
+  cpuMetricType?: CpuMetricSubType;
+  memoryMetricType?: MemoryMetricSubType;
+  networkMetricType?: NetworkMetricSubType;
+  statusMetricType?: StatusMetricSubType;
+  systemMetricType?: SystemMetricSubType;
+  vmwareMetricType?: VmwareMetricSubType;
+  firewallMetricType?: FirewallMetricType;
   text?: string;
   showSeriesCount?: boolean;
   seriesCountSize?: 'sm' | 'md' | 'lg';
 }
 
 export type SimpleOptions = PanelOptions;
+
+// Aliases em Português
+export type OpcoesPainel = PanelOptions;
+export type ItemBlocoMetrica = MetricBlockItem;
+export type PontoDadoMetrica = MetricDataPoint;
+export type NivelStatusMetrica = MetricStatusLevel;
+export type CategoriaMetrica = MetricCategory;
+export type TipoDispositivo = DeviceType;
+export type ModoExibicaoCard = CardDisplayMode;
+export type TipoGrafico = ChartType;
+export type TamanhoBloco = BlockSize;
+export type UnidadePadrao = StandardUnitType;
+export type QualquerSubtipoMetrica = AnyDeviceMetricType;
