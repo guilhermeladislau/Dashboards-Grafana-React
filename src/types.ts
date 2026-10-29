@@ -36,6 +36,14 @@ export type DeviceType =
 export type CardDisplayMode = 'individual' | 'consolidado';
 
 /**
+ * Modo de agrupamento quando há múltiplos dispositivos e/ou métricas no card consolidado
+ * - unico_card: Todos os dispositivos e métricas dentro de um único card
+ * - por_metrica: Um card consolidado para cada métrica (contendo todos os dispositivos)
+ * - por_dispositivo: Um card consolidado para cada dispositivo (contendo todas as métricas dele)
+ */
+export type ConsolidatedGroupMode = 'unico_card' | 'por_metrica' | 'por_dispositivo';
+
+/**
  * Tipos de Gráfico suportados (estilo Stat / Gauge / Bar do Grafana)
  */
 export type ChartType =
@@ -278,11 +286,18 @@ export interface MetricDataPoint {
 export interface MetricBlockItem {
   id: string;
   title: string;
+  deviceName?: string;
+  metricName?: string;
+  metricKey?: string;
   currentValue: number | string | null;
   displayValue: string;
   unit: string;
   points: MetricDataPoint[];
   color?: string;
+  sparklineColor?: string;
+  thresholdWarning?: number;
+  thresholdCritical?: number;
+  showStatusBadge?: boolean;
   category: MetricCategory;
   statusLevel: MetricStatusLevel;
   statusBadge?: string;
@@ -292,6 +307,54 @@ export interface MetricBlockItem {
   icon?: string;
   deviceType: DeviceType;
   chartType: Exclude<ChartType, 'auto'>;
+}
+
+/**
+ * Configuração de estilização individual para uma métrica específica
+ */
+export interface MetricStyleOverride {
+  metricKey: string;
+  displayName?: string;
+  seriesFilter?: string;
+  chartType?: ChartType;
+  unit?: StandardUnitType;
+  decimalsAuto?: boolean;
+  customDecimals?: number;
+  sparklineColor?: string;
+  thresholdMode?: ThresholdMode;
+  thresholdWarning?: number;
+  thresholdCritical?: number;
+  colorOk?: string;
+  colorWarning?: string;
+  colorCritical?: string;
+  fixedMetricColor?: string;
+  prefix?: string;
+  suffix?: string;
+  min?: number;
+  max?: number;
+  showStatusBadge?: boolean;
+}
+
+/**
+ * Item de dispositivo monitorado no card (ex: múltiplos servidores)
+ */
+export interface MonitoredDeviceItem {
+  id: string;
+  name: string;
+  hostFilter?: string;
+  enabled: boolean;
+  metricOverride?: AnyDeviceMetricType;
+  chartTypeOverride?: ChartType;
+  customColor?: string;
+}
+
+/**
+ * Grupo de configuração de múltiplos dispositivos no card
+ */
+export interface MonitoredDevicesConfigGroup {
+  devices?: MonitoredDeviceItem[];
+  groupInSingleCard?: boolean;
+  consolidatedGroupMode?: ConsolidatedGroupMode;
 }
 
 /**
@@ -307,6 +370,38 @@ export interface StandardOptionsGroup {
   min?: number;
   max?: number;
   noValue?: string;
+}
+
+/**
+ * Grupo de opções da categoria Estilização Visual (gavetas retráteis)
+ */
+export interface EstilizacaoVisualGroup {
+  // 1. Estilização do Gráfico
+  chartType?: ChartType;
+  sparklineColor?: string;
+  showProgressBar?: boolean;
+  showSparkline?: boolean;
+  thresholdMode?: ThresholdMode;
+  thresholdWarning?: number;
+  thresholdCritical?: number;
+  colorOk?: string;
+  colorWarning?: string;
+  colorCritical?: string;
+  fixedMetricColor?: string;
+
+  // 2. Estilização do Painel
+  backgroundColor?: string;
+  cardBackgroundColor?: string;
+  textColor?: string;
+  borderColor?: string;
+  blockSize?: BlockSize;
+  blockHeight?: number;
+  columns?: LayoutColumns;
+  showStatusBadge?: boolean;
+
+  // 3. Fontes e Tipografia
+  fontFamily?: FontFamily;
+  fontSize?: FontSize;
 }
 
 export interface PanelOptions {
@@ -325,8 +420,16 @@ export interface PanelOptions {
   portaRedeMetric: PortaRedeMetricType;
   overrideCardTitleWithPreset: boolean;
 
+  // 2.1 Seleção de Múltiplas Métricas, Estilização Individual e Múltiplos Dispositivos
+  selectedMetrics?: AnyDeviceMetricType[];
+  metricStyles?: Record<string, MetricStyleOverride>;
+  monitoredDevicesConfig?: MonitoredDevicesConfigGroup;
+
   // 3. Subcategoria Standard Options (agrupada no editor colapsável)
   standardOptions?: StandardOptionsGroup;
+
+  // 4. Subcategorias de Estilização Visual (agrupadas em gavetas retráteis)
+  estilizacaoVisual?: EstilizacaoVisualGroup;
 
   // Propriedades mantidas para retrocompatibilidade
   standardUnit?: StandardUnitType;

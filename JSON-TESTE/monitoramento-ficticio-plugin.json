@@ -1,0 +1,976 @@
+{
+  "__inputs": [
+    {
+      "name": "DS_TESTDATA",
+      "label": "TestData (dados fictícios)",
+      "description": "Selecione uma instância do datasource TestData do Grafana.",
+      "type": "datasource",
+      "pluginId": "grafana-testdata-datasource",
+      "pluginName": "TestData"
+    }
+  ],
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "Dashboard fictício para testar o plugin arxcyber-dashboardcustomizadoreact-panel usando séries sintéticas do datasource TestData.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "id": 1,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Firewall • Filial São Paulo",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "FortiGate-SP-01: Uso de CPU",
+          "labels": "host=\"FortiGate-SP-01\", item=\"Uso de CPU\"",
+          "seriesCount": 1,
+          "startValue": 63,
+          "min": 0,
+          "max": 100,
+          "spread": 0.8333333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Uso de CPU",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "circulo",
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Firewall • Filial São Paulo",
+        "showPanelTitle": true,
+        "deviceName": "FortiGate-SP-01",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "circulo",
+        "thresholdMode": "normal",
+        "thresholdWarning": 70,
+        "thresholdCritical": 85
+      }
+    },
+    {
+      "id": 2,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Máquina Virtual • ERP",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "VM-ERP-PROD-01: Uso de memória",
+          "labels": "host=\"VM-ERP-PROD-01\", item=\"Uso de memória\"",
+          "seriesCount": 1,
+          "startValue": 78,
+          "min": 0,
+          "max": 100,
+          "spread": 0.8333333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "vm",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_memoria_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Uso de memória",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "arco",
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Máquina Virtual • ERP",
+        "showPanelTitle": true,
+        "deviceName": "VM-ERP-PROD-01",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "arco",
+        "thresholdMode": "normal",
+        "thresholdWarning": 75,
+        "thresholdCritical": 90
+      }
+    },
+    {
+      "id": 3,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Proxy • Internet",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 250
+              },
+              {
+                "color": "red",
+                "value": 400
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "Proxy-SQUID-01: Latência HTTP",
+          "labels": "host=\"Proxy-SQUID-01\", item=\"Latência HTTP\"",
+          "seriesCount": 1,
+          "startValue": 142,
+          "min": 0,
+          "max": 500,
+          "spread": 4.166666666666667,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "proxy",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "ms",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Latência HTTP",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "linha",
+          "thresholdMode": "normal",
+          "thresholdWarning": 250,
+          "thresholdCritical": 400,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Proxy • Internet",
+        "showPanelTitle": true,
+        "deviceName": "Proxy-SQUID-01",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "linha",
+        "thresholdMode": "normal",
+        "thresholdWarning": 250,
+        "thresholdCritical": 400
+      }
+    },
+    {
+      "id": 4,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Host • Cluster VMware",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 0
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 70
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "ESXi-CLUSTER-01: Uso de CPU física",
+          "labels": "host=\"ESXi-CLUSTER-01\", item=\"Uso de CPU física\"",
+          "seriesCount": 1,
+          "startValue": 54,
+          "min": 0,
+          "max": 100,
+          "spread": 0.8333333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "host",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Uso de CPU física",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "barra",
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Host • Cluster VMware",
+        "showPanelTitle": true,
+        "deviceName": "ESXi-CLUSTER-01",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "barra",
+        "thresholdMode": "normal",
+        "thresholdWarning": 70,
+        "thresholdCritical": 85
+      }
+    },
+    {
+      "id": 5,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Servidor • Banco de Dados",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 0,
+        "y": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 80
+              },
+              {
+                "color": "red",
+                "value": 92
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "DB-LINUX-01: Uso de disco /",
+          "labels": "host=\"DB-LINUX-01\", item=\"Uso de disco /\"",
+          "seriesCount": 1,
+          "startValue": 82,
+          "min": 0,
+          "max": 100,
+          "spread": 0.8333333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Uso de disco /",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "termometro",
+          "thresholdMode": "normal",
+          "thresholdWarning": 80,
+          "thresholdCritical": 92,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Servidor • Banco de Dados",
+        "showPanelTitle": true,
+        "deviceName": "DB-LINUX-01",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "termometro",
+        "thresholdMode": "normal",
+        "thresholdWarning": 80,
+        "thresholdCritical": 92
+      }
+    },
+    {
+      "id": 6,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Access Point • Escritório",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 6,
+        "y": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 60
+              },
+              {
+                "color": "red",
+                "value": 85
+              }
+            ]
+          },
+          "unit": "clientes"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "AP-ANDAR-02: Clientes conectados",
+          "labels": "host=\"AP-ANDAR-02\", item=\"Clientes conectados\"",
+          "seriesCount": 1,
+          "startValue": 37,
+          "min": 0,
+          "max": 100,
+          "spread": 0.8333333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "access_point",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "clientes",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Clientes conectados",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "torre",
+          "thresholdMode": "normal",
+          "thresholdWarning": 60,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Access Point • Escritório",
+        "showPanelTitle": true,
+        "deviceName": "AP-ANDAR-02",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "torre",
+        "thresholdMode": "normal",
+        "thresholdWarning": 60,
+        "thresholdCritical": 85
+      }
+    },
+    {
+      "id": 7,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Porta de Rede • Core",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 12,
+        "y": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 75
+              },
+              {
+                "color": "red",
+                "value": 90
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "SW-CORE-01 / Gi1/0/24: Utilização da porta",
+          "labels": "host=\"SW-CORE-01 / Gi1/0/24\", item=\"Utilização da porta\"",
+          "seriesCount": 1,
+          "startValue": 68,
+          "min": 0,
+          "max": 100,
+          "spread": 0.8333333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "porta_rede",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_cpu",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Utilização da porta",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "bullet",
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Porta de Rede • Core",
+        "showPanelTitle": true,
+        "deviceName": "SW-CORE-01 / Gi1/0/24",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "bullet",
+        "thresholdMode": "normal",
+        "thresholdWarning": 75,
+        "thresholdCritical": 90
+      }
+    },
+    {
+      "id": 8,
+      "type": "arxcyber-dashboardcustomizadoreact-panel",
+      "title": "Firewall • VPN",
+      "description": "Dados fictícios gerados pelo datasource TestData do Grafana para validar o painel.",
+      "datasource": {
+        "type": "grafana-testdata-datasource",
+        "uid": "${DS_TESTDATA}"
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 6,
+        "x": 18,
+        "y": 8
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "orange",
+                "value": 50000
+              },
+              {
+                "color": "red",
+                "value": 80000
+              }
+            ]
+          },
+          "unit": "numero"
+        },
+        "overrides": []
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "scenarioId": "random_walk",
+          "alias": "FortiGate-SP-01: Sessões concorrentes",
+          "labels": "host=\"FortiGate-SP-01\", item=\"Sessões concorrentes\"",
+          "seriesCount": 1,
+          "startValue": 42800,
+          "min": 0,
+          "max": 100000,
+          "spread": 833.3333333333334,
+          "noise": 0,
+          "datasource": {
+            "type": "grafana-testdata-datasource",
+            "uid": "${DS_TESTDATA}"
+          }
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "maxDevices": 0,
+        "firewallMetric": "fw_sessoes",
+        "vmMetric": "vm_cpu_uso",
+        "proxyMetric": "proxy_latencia",
+        "hostMetric": "host_cpu_uso",
+        "servidorMetric": "srv_disco_uso",
+        "accessPointMetric": "ap_clientes",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": false,
+        "selectedMetrics": [],
+        "standardOptions": {
+          "unit": "numero",
+          "decimalsAuto": false,
+          "customDecimals": 0,
+          "displayName": "Sessões concorrentes",
+          "noValue": "Sem leitura"
+        },
+        "estilizacaoVisual": {
+          "chartType": "anel",
+          "thresholdMode": "normal",
+          "thresholdWarning": 50000,
+          "thresholdCritical": 80000,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "backgroundColor": "#111827",
+          "cardBackgroundColor": "#1f2937",
+          "textColor": "#f9fafb",
+          "borderColor": "#374151",
+          "blockSize": "md",
+          "columns": "auto",
+          "showStatusBadge": true,
+          "showProgressBar": true,
+          "showSparkline": true,
+          "sparklineColor": "#38bdf8",
+          "fontFamily": "default",
+          "fontSize": "md"
+        },
+        "panelTitle": "Firewall • VPN",
+        "showPanelTitle": true,
+        "deviceName": "FortiGate-SP-01",
+        "fontFamily": "default",
+        "fontSize": "md",
+        "columns": "auto",
+        "showStatusBadge": true,
+        "showProgressBar": true,
+        "showSparkline": true,
+        "chartType": "anel",
+        "thresholdMode": "normal",
+        "thresholdWarning": 50000,
+        "thresholdCritical": 80000
+      }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 41,
+  "tags": [
+    "teste",
+    "dados-ficticios",
+    "zabbix"
+  ],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Teste do Plugin • Monitoramento Fictício",
+  "uid": null,
+  "version": 1
+}

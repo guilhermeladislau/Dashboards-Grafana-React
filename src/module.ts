@@ -1,6 +1,14 @@
 import { PanelPlugin } from '@grafana/data';
 import { PanelOptions } from './types';
-import { PainelPrincipal, EditorStandardOptions } from './components';
+import {
+  PainelPrincipal,
+  EditorStandardOptions,
+  EditorEstilizacaoVisual,
+  EditorSelecaoMetricas,
+  EditorEstilizacaoMetricas,
+  EditorDispositivosCard,
+} from './components';
+import { estaEmModoMultiplasMetricas } from './utilitarios/preconfiguracoesDispositivos';
 
 export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
   .setPanelOptions((builder) => {
@@ -248,6 +256,51 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           },
         })
 
+        // =====================================================================
+        // 2.8 SELEÇÃO DE MÚLTIPLAS MÉTRICAS E ESTILIZAÇÃO INDIVIDUAL (PARALELA)
+        // =====================================================================
+        .addCustomEditor({
+          id: 'selectedMetricsEditor',
+          path: 'selectedMetrics',
+          name: 'Quais Métricas Monitorar',
+          description:
+            'Selecione uma ou mais métricas específicas para monitorar no card (habilitado ao selecionar Várias Métricas)',
+          category: ['Dispositivo e Monitoramento'],
+          editor: EditorSelecaoMetricas,
+          defaultValue: [],
+          showIf: (config) => estaEmModoMultiplasMetricas(config),
+        })
+
+        .addCustomEditor({
+          id: 'metricStylesEditor',
+          path: 'metricStyles',
+          name: 'Estilizar Métricas Individualmente',
+          description:
+            'Personalize gráfico, cores, limiares, unidade e título para cada métrica monitorada individualmente',
+          category: ['Dispositivo e Monitoramento'],
+          editor: EditorEstilizacaoMetricas,
+          defaultValue: {},
+          showIf: (config) => estaEmModoMultiplasMetricas(config),
+        })
+
+        // =====================================================================
+        // 2.9 MÚLTIPLOS DISPOSITIVOS NO CARD (EX: 10+ SERVIDORES EM UM ÚNICO CARD)
+        // =====================================================================
+        .addCustomEditor({
+          id: 'monitoredDevicesConfigEditor',
+          path: 'monitoredDevicesConfig',
+          name: 'Dispositivos Monitorados no Card',
+          description:
+            'Adicione múltiplos dispositivos (ex: 10+ servidores) para exibir o monitoramento individual de todos dentro de um único card',
+          category: ['Dispositivo e Monitoramento'],
+          editor: EditorDispositivosCard,
+          defaultValue: {
+            devices: [],
+            groupInSingleCard: true,
+            consolidatedGroupMode: 'unico_card',
+          },
+        })
+
         .addBooleanSwitch({
           category: ['Dispositivo e Monitoramento'],
           path: 'overrideCardTitleWithPreset',
@@ -280,225 +333,41 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
         })
 
         // =====================================================================
-        // 4. ESTILIZAÇÃO VISUAL: VARIAÇÕES DOS GRÁFICOS
+        // 4. ESTILIZAÇÃO VISUAL (SUBRETRAIS: GRÁFICOS, PAINEL E FONTES)
         // =====================================================================
-        .addSelect({
-          category: ['Estilização Visual', 'Variações dos Gráficos'],
-          path: 'chartType',
-          name: 'Variação do Gráfico (Chart Style)',
-          description:
-            'Escolha a variação visual do gráfico integrado para a leitura da métrica',
-          defaultValue: 'auto',
-          settings: {
-            options: [
-              { value: 'auto', label: '✨ Pré-configurado da Métrica (Automático)' },
-              { value: 'barra', label: '▬ Barra de Progresso Horizontal' },
-              { value: 'circulo', label: '⭕ Círculo / Gauge Radial (360°)' },
-              { value: 'arco', label: '🌙 Arco / Semi-Gauge (Estilo Gauge Grafana 180°)' },
-              { value: 'anel', label: '🍩 Anel / Donut Moderno com Glow' },
-              { value: 'torre', label: '📊 Torre / Colunas Verticais Graduadas' },
-              { value: 'area', label: '📈 Linha com Área Preenchida (Stat Grafana)' },
-              { value: 'linha', label: '📉 Linha Contínua Limpa (Sparkline Pura)' },
-              { value: 'bullet', label: '🎯 Medidor Bullet (Com Linhas de Limiar)' },
-              { value: 'termometro', label: '🌡️ Termômetro de Nível Vertical' },
-              { value: 'nenhum', label: '🔢 Somente Valor (Sem Gráfico)' },
-            ],
-          },
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Variações dos Gráficos'],
-          path: 'sparklineColor',
-          name: 'Cor Customizada do Gráfico',
-          description: 'Sobrescreve a cor padrão do gráfico (Barra, Círculo, Arco, Torre, etc.)',
-        })
-        .addBooleanSwitch({
-          category: ['Estilização Visual', 'Variações dos Gráficos'],
-          path: 'showProgressBar',
-          name: 'Permitir gráficos de barra horizontal',
-          defaultValue: true,
-        })
-        .addBooleanSwitch({
-          category: ['Estilização Visual', 'Variações dos Gráficos'],
-          path: 'showSparkline',
-          name: 'Permitir gráficos de linha/área',
-          defaultValue: true,
-        })
-
-        // =====================================================================
-        // 5. ESTILIZAÇÃO VISUAL: CORES E LIMIARES
-        // =====================================================================
-        .addSelect({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'thresholdMode',
-          name: 'Esquema de Cores e Limiares (Color Scheme)',
-          description:
-            'Define como as cores reagem ao valor da métrica (Verde/Amarelo/Vermelho ou Cor Fixa)',
-          defaultValue: 'auto',
-          settings: {
-            options: [
-              { value: 'auto', label: '✨ Pré-configurado da Métrica (Automático)' },
-              { value: 'normal', label: 'Normal (Maior valor = Mais crítico / Alerta)' },
-              { value: 'invertido', label: 'Invertido (Menor valor = Mais crítico / Alerta)' },
-              { value: 'fixo', label: 'Cor Fixa Única (Sem alteração por limiares)' },
-            ],
-          },
-        })
-        .addNumberInput({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'thresholdWarning',
-          name: 'Limiar de Atenção (Warning)',
-          description: 'Valor numérico que aciona o estado de Atenção (Amarelo)',
-          defaultValue: 70,
-          showIf: (config) => config.thresholdMode !== 'fixo',
-        })
-        .addNumberInput({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'thresholdCritical',
-          name: 'Limiar Crítico (Critical)',
-          description: 'Valor numérico que aciona o estado Crítico (Vermelho)',
-          defaultValue: 85,
-          showIf: (config) => config.thresholdMode !== 'fixo',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'colorOk',
-          name: 'Cor do Estado Normal (OK)',
-          description: 'Cor do indicador quando a métrica está em nível saudável (padrão: Verde)',
-          showIf: (config) => config.thresholdMode !== 'fixo',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'colorWarning',
-          name: 'Cor do Estado de Atenção (Warning)',
-          description: 'Cor do indicador quando a métrica atinge o limiar de atenção (padrão: Amarelo)',
-          showIf: (config) => config.thresholdMode !== 'fixo',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'colorCritical',
-          name: 'Cor do Estado Crítico (Critical)',
-          description: 'Cor do indicador quando a métrica atinge o limiar crítico (padrão: Vermelho)',
-          showIf: (config) => config.thresholdMode !== 'fixo',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'fixedMetricColor',
-          name: 'Cor Fixa da Métrica',
-          description: 'Cor aplicada quando o esquema de cores for Cor Fixa Única',
-          showIf: (config) => config.thresholdMode === 'fixo',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'backgroundColor',
-          name: 'Cor de fundo do painel',
-          description: 'Deixe vazio para herdar a cor do tema do Grafana',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'cardBackgroundColor',
-          name: 'Cor de fundo dos blocos (cards)',
-          description: 'Deixe vazio para herdar o degradê escuro ou cor padrão',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'textColor',
-          name: 'Cor do texto',
-          description: 'Cor personalizada para títulos e valores das métricas',
-        })
-        .addColorPicker({
-          category: ['Estilização Visual', 'Cores e Limiares'],
-          path: 'borderColor',
-          name: 'Cor da borda dos blocos',
-        })
-
-        // =====================================================================
-        // 6. ESTILIZAÇÃO VISUAL: TIPOGRAFIA
-        // =====================================================================
-        .addSelect({
-          category: ['Estilização Visual', 'Tipografia'],
-          path: 'fontFamily',
-          name: 'Família da fonte',
-          description: 'Fonte aplicada aos textos e números do painel',
-          defaultValue: 'default',
-          settings: {
-            options: [
-              { value: 'default', label: 'Padrão Grafana' },
-              { value: 'Inter', label: 'Inter' },
-              { value: 'Roboto', label: 'Roboto' },
-              { value: 'Open Sans', label: 'Open Sans' },
-              { value: 'Montserrat', label: 'Montserrat' },
-              { value: 'monospace', label: 'Monoespaçada' },
-            ],
-          },
-        })
-        .addRadio({
-          category: ['Estilização Visual', 'Tipografia'],
-          path: 'fontSize',
-          name: 'Tamanho da fonte',
-          description: 'Escala de tamanho dos textos e métricas',
-          defaultValue: 'md',
-          settings: {
-            options: [
-              { value: 'sm', label: 'Pequeno (SM)' },
-              { value: 'md', label: 'Médio (MD)' },
-              { value: 'lg', label: 'Grande (LG)' },
-              { value: 'xl', label: 'Extra Grande (XL)' },
-            ],
+        .addCustomEditor({
+          id: 'estilizacaoVisualCollapsible',
+          path: 'estilizacaoVisual',
+          name: '',
+          category: ['Estilização Visual'],
+          editor: EditorEstilizacaoVisual,
+          defaultValue: {
+            chartType: 'auto',
+            sparklineColor: '',
+            showProgressBar: true,
+            showSparkline: true,
+            thresholdMode: 'auto',
+            thresholdWarning: 70,
+            thresholdCritical: 85,
+            colorOk: '',
+            colorWarning: '',
+            colorCritical: '',
+            fixedMetricColor: '',
+            backgroundColor: '',
+            cardBackgroundColor: '',
+            textColor: '',
+            borderColor: '',
+            blockSize: 'md',
+            blockHeight: 0,
+            columns: 'auto',
+            showStatusBadge: true,
+            fontFamily: 'default',
+            fontSize: 'md',
           },
         })
 
         // =====================================================================
-        // 7. ESTILIZAÇÃO VISUAL: LAYOUT DOS BLOCOS
-        // =====================================================================
-        .addRadio({
-          category: ['Estilização Visual', 'Layout dos Blocos'],
-          path: 'blockSize',
-          name: 'Tamanho dos Blocos de Monitoramento',
-          description:
-            'Ajusta o tamanho físico dos cards (altura mínima, preenchimento e escala dos gráficos)',
-          defaultValue: 'md',
-          settings: {
-            options: [
-              { value: 'sm', label: 'Pequeno / Compacto (NOC / Denso)' },
-              { value: 'md', label: 'Médio / Padrão (Equilibrado)' },
-              { value: 'lg', label: 'Grande / Amplo (Destaque)' },
-              { value: 'xl', label: 'Extra Grande / Expandido (TV Wall)' },
-            ],
-          },
-        })
-        .addNumberInput({
-          category: ['Estilização Visual', 'Layout dos Blocos'],
-          path: 'blockHeight',
-          name: 'Altura Mínima Customizada dos Blocos (px)',
-          description:
-            'Define uma altura mínima específica em pixels para os blocos (deixe 0 para automático)',
-          defaultValue: 0,
-        })
-        .addRadio({
-          category: ['Estilização Visual', 'Layout dos Blocos'],
-          path: 'columns',
-          name: 'Distribuição de colunas',
-          defaultValue: 'auto',
-          settings: {
-            options: [
-              { value: 'auto', label: 'Automático (Responsivo)' },
-              { value: '1', label: '1 Coluna' },
-              { value: '2', label: '2 Colunas' },
-              { value: '3', label: '3 Colunas' },
-              { value: '4', label: '4 Colunas' },
-            ],
-          },
-        })
-        .addBooleanSwitch({
-          category: ['Estilização Visual', 'Layout dos Blocos'],
-          path: 'showStatusBadge',
-          name: 'Exibir tag de status',
-          description: 'Exibe crachá indicativo (ex.: ONLINE, NORMAL, ATENÇÃO, CRÍTICO)',
-          defaultValue: true,
-        })
-
-        // =====================================================================
-        // 8. IDENTIFICAÇÃO E TÍTULO
+        // 5. IDENTIFICAÇÃO E TÍTULO
         // =====================================================================
         .addTextInput({
           category: ['Identificação'],
@@ -525,7 +394,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
         })
 
         // =====================================================================
-        // 9. AVANÇADO / TESTES E2E
+        // 6. AVANÇADO / TESTES E2E
         // =====================================================================
         .addBooleanSwitch({
           category: ['Avançado'],

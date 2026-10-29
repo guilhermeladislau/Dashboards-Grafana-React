@@ -5,6 +5,7 @@ import { useStyles2 } from '@grafana/ui';
 import { PanelDataErrorView } from '@grafana/runtime';
 import { PanelOptions } from '../../types';
 import { extrairMetricasDosDados } from '../../utilitarios/processadorDados';
+import { resolverOpcoesVisuais } from '../../utilitarios/resolucaoOpcoes';
 import { GradeMetricas } from '../grade/GradeMetricas';
 import { TituloPainel } from './TituloPainel';
 import { EstadoVazio } from './EstadoVazio';
@@ -21,27 +22,30 @@ export const PainelPrincipal: React.FC<PainelPrincipalProps> = ({
   id,
   replaceVariables,
 }) => {
-  const estilos = useStyles2(() => obterEstilosPainel(options));
-
   const opcoesResolvidas = useMemo<PanelOptions>(() => {
-    if (!replaceVariables) {
-      return options;
-    }
-    const std = options.standardOptions;
-    return {
+    const visuais = resolverOpcoesVisuais(options);
+    const base: PanelOptions = {
       ...options,
-      standardDisplayName: options.standardDisplayName
-        ? replaceVariables(options.standardDisplayName)
-        : options.standardDisplayName,
-      standardPrefix: options.standardPrefix
-        ? replaceVariables(options.standardPrefix)
-        : options.standardPrefix,
-      standardSuffix: options.standardSuffix
-        ? replaceVariables(options.standardSuffix)
-        : options.standardSuffix,
-      deviceName: options.deviceName
-        ? replaceVariables(options.deviceName)
-        : options.deviceName,
+      ...visuais,
+    };
+    if (!replaceVariables) {
+      return base;
+    }
+    const std = base.standardOptions;
+    return {
+      ...base,
+      standardDisplayName: base.standardDisplayName
+        ? replaceVariables(base.standardDisplayName)
+        : base.standardDisplayName,
+      standardPrefix: base.standardPrefix
+        ? replaceVariables(base.standardPrefix)
+        : base.standardPrefix,
+      standardSuffix: base.standardSuffix
+        ? replaceVariables(base.standardSuffix)
+        : base.standardSuffix,
+      deviceName: base.deviceName
+        ? replaceVariables(base.deviceName)
+        : base.deviceName,
       standardOptions: std
         ? {
             ...std,
@@ -53,6 +57,8 @@ export const PainelPrincipal: React.FC<PainelPrincipalProps> = ({
     };
   }, [options, replaceVariables]);
 
+  const estilos = useStyles2(() => obterEstilosPainel(opcoesResolvidas));
+
   const metricas = useMemo(() => {
     const lista = extrairMetricasDosDados(data, opcoesResolvidas);
     if (!replaceVariables) {
@@ -61,6 +67,8 @@ export const PainelPrincipal: React.FC<PainelPrincipalProps> = ({
     return lista.map((item) => ({
       ...item,
       title: replaceVariables(item.title),
+      deviceName: item.deviceName ? replaceVariables(item.deviceName) : item.deviceName,
+      metricName: item.metricName ? replaceVariables(item.metricName) : item.metricName,
     }));
   }, [data, opcoesResolvidas, replaceVariables]);
 
@@ -95,7 +103,7 @@ export const PainelPrincipal: React.FC<PainelPrincipalProps> = ({
       {options.showPanelTitle && (
         <TituloPainel
           titulo={options.panelTitle}
-          corTexto={options.textColor}
+          corTexto={opcoesResolvidas.textColor}
           substituirVariaveis={replaceVariables}
         />
       )}

@@ -29,6 +29,8 @@ export const BlocoMetrica: React.FC<BlocoMetricaProps> = ({
     item.chartType === 'anel' ||
     item.chartType === 'termometro';
 
+  const etiquetaResolvida = item.deviceName || etiquetaDispositivo;
+
   return (
     <div
       className={estilos.bloco}
@@ -38,8 +40,8 @@ export const BlocoMetrica: React.FC<BlocoMetricaProps> = ({
           : undefined
       }
     >
-      {/* Etiqueta sutil do tipo de dispositivo (quando aplicável) */}
-      {etiquetaDispositivo && (
+      {/* Etiqueta sutil do tipo/nome do dispositivo (quando aplicável) */}
+      {etiquetaResolvida && (
         <div
           className={css`
             font-size: 9px;
@@ -51,7 +53,7 @@ export const BlocoMetrica: React.FC<BlocoMetricaProps> = ({
             opacity: 0.85;
           `}
         >
-          {etiquetaDispositivo}
+          {etiquetaResolvida}
         </div>
       )}
 
@@ -62,7 +64,7 @@ export const BlocoMetrica: React.FC<BlocoMetricaProps> = ({
         icone={item.icon}
         tagStatus={item.statusBadge}
         corStatus={item.statusColor}
-        exibirTagStatus={options.showStatusBadge !== false}
+        exibirTagStatus={(item.showStatusBadge ?? options.showStatusBadge) !== false}
         tamanhoFonteTitulo={estilos.tamanhoAtual.titulo}
         corTexto={options.textColor}
         corTextoSecundario={tema.colors.text.secondary}

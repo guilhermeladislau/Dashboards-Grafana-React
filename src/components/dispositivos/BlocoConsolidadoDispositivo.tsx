@@ -21,12 +21,18 @@ export interface BlocoConsolidadoDispositivoProps {
   items: MetricBlockItem[];
   options: PanelOptions;
   totalOriginal?: number;
+  tituloCabecalhoCustomizado?: string;
+  subtituloCabecalhoCustomizado?: string;
+  iconeCabecalhoCustomizado?: string;
 }
 
 export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoProps> = ({
   items,
   options,
   totalOriginal,
+  tituloCabecalhoCustomizado,
+  subtituloCabecalhoCustomizado,
+  iconeCabecalhoCustomizado,
 }) => {
   const tema = useTheme2();
   const dispositivo = obterDispositivoAtivo(options);
@@ -36,17 +42,55 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
   const tamanhoAtual = obterTamanhoResolvido(options.fontSize);
   const familiaFonte = obterFamiliaFonteResolvida(options.fontFamily);
 
-  // Determina o status geral do card consolidado a partir da métrica mais severa
-  const temCritico = items.some(
-    (i) => i.statusLevel === 'critical' || i.statusLevel === 'offline'
+  // Analisa quantos dispositivos e métricas diferentes existem neste card
+  const nomesDispositivosUnicos = Array.from(
+    new Set(items.map((i) => i.deviceName).filter(Boolean))
   );
-  const temAtencao = items.some((i) => i.statusLevel === 'warning');
+  const metricasUnicas = Array.from(
+    new Set(items.map((i) => i.metricName || i.title).filter(Boolean))
+  );
 
-  const statusGeral = temCritico
-    ? { tag: 'CRÍTICO', cor: '#ef4444' }
-    : temAtencao
-    ? { tag: 'ATENÇÃO', cor: '#f59e0b' }
-    : { tag: 'OPERACIONAL', cor: '#22c55e' };
+  const temMultiplosDispositivos =
+    nomesDispositivosUnicos.length > 1 ||
+    (nomesDispositivosUnicos.length === 1 &&
+      items.length > 1 &&
+      metricasUnicas.length === 1);
+
+  const ehMesmaMetricaMultiplosDispositivos =
+    temMultiplosDispositivos && metricasUnicas.length === 1;
+
+  // Contagem de status para o cabeçalho
+  const qtdCritico = items.filter(
+    (i) => i.statusLevel === 'critical' || i.statusLevel === 'offline'
+  ).length;
+  const qtdAtencao = items.filter((i) => i.statusLevel === 'warning').length;
+  const qtdOk = items.length - qtdCritico - qtdAtencao;
+
+  const statusGeral =
+    qtdCritico > 0
+      ? { tag: 'CRÍTICO', cor: '#ef4444' }
+      : qtdAtencao > 0
+      ? { tag: 'ATENÇÃO', cor: '#f59e0b' }
+      : { tag: 'OPERACIONAL', cor: '#22c55e' };
+
+  const tituloPrincipalCard =
+    tituloCabecalhoCustomizado ||
+    (ehMesmaMetricaMultiplosDispositivos
+      ? `${options.deviceName || meta.nome} — ${metricasUnicas[0]}`
+      : options.deviceName ||
+        (nomesDispositivosUnicos.length === 1
+          ? nomesDispositivosUnicos[0]
+          : meta.nome));
+
+  const subtituloPrincipalCard =
+    subtituloCabecalhoCustomizado ||
+    (temMultiplosDispositivos
+      ? `${nomesDispositivosUnicos.length || items.length} dispositivo(s) monitorado(s) • ${qtdOk} normal${
+          qtdAtencao > 0 ? ` • ${qtdAtencao} atenção` : ''
+        }${qtdCritico > 0 ? ` • ${qtdCritico} crítico` : ''}`
+      : totalOriginal && totalOriginal > items.length
+      ? `Exibindo ${items.length} de ${totalOriginal} métricas monitoradas`
+      : `${items.length} métrica(s) monitorada(s) no dispositivo`);
 
   return (
     <div
@@ -64,7 +108,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
         width: 100%;
       `}
     >
-      {/* Cabeçalho do Dispositivo Consolidado */}
+      {/* Cabeçalho do Card Consolidado */}
       <div
         className={css`
           display: flex;
@@ -73,6 +117,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
           padding-bottom: 12px;
           margin-bottom: 14px;
           border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+          gap: 12px;
         `}
       >
         <div
@@ -80,6 +125,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
             display: flex;
             align-items: center;
             gap: 10px;
+            overflow: hidden;
           `}
         >
           <div
@@ -93,19 +139,23 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
               align-items: center;
               justify-content: center;
               font-size: 18px;
+              flex-shrink: 0;
             `}
           >
-            {meta.icone}
+            {iconeCabecalhoCustomizado || meta.icone}
           </div>
-          <div>
+          <div style={{ overflow: 'hidden' }}>
             <div
               className={css`
                 font-size: 14px;
                 font-weight: 800;
                 letter-spacing: 0.3px;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
               `}
             >
-              {options.deviceName || meta.nome}
+              {tituloPrincipalCard}
             </div>
             <div
               className={css`
@@ -113,9 +163,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
                 color: ${tema.colors.text.secondary};
               `}
             >
-              {totalOriginal && totalOriginal > items.length
-                ? `Exibindo ${items.length} de ${totalOriginal} métricas monitoradas`
-                : `${items.length} métrica(s) monitorada(s) no dispositivo`}
+              {subtituloPrincipalCard}
             </div>
           </div>
         </div>
@@ -125,11 +173,14 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
         )}
       </div>
 
-      {/* Sub-grade interna com as métricas do dispositivo */}
+      {/* Sub-grade interna com os dispositivos / métricas monitoradas */}
       <div
         className={css`
           display: grid;
-          grid-template-columns: ${obterColunasGrade(options.columns, dimensoes.larguraMinimaGrade)};
+          grid-template-columns: ${obterColunasGrade(
+            options.columns,
+            dimensoes.larguraMinimaGrade
+          )};
           gap: 12px;
           width: 100%;
         `}
@@ -140,6 +191,22 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
             item.chartType === 'arco' ||
             item.chartType === 'anel' ||
             item.chartType === 'termometro';
+
+          const exibirBadgeItem =
+            (item.showStatusBadge ?? options.showStatusBadge) !== false;
+
+          // Quando estamos exibindo vários dispositivos para a mesma métrica (ex: Uso de CPU de 10 servidores),
+          // o destaque principal do sub-card é o nome do Servidor/Dispositivo
+          const tituloPrincipalCelula =
+            ehMesmaMetricaMultiplosDispositivos && item.deviceName
+              ? item.deviceName
+              : item.title;
+
+          const exibirEtiquetaDispositivoTopo =
+            !ehMesmaMetricaMultiplosDispositivos &&
+            temMultiplosDispositivos &&
+            Boolean(item.deviceName);
+
           return (
             <div
               key={item.id}
@@ -152,52 +219,116 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
                 border-radius: 12px;
                 padding: ${dimensoes.preenchimento};
                 min-height: ${dimensoes.alturaMinima};
-                transition: border-color 0.2s ease;
+                transition: border-color 0.2s ease, transform 0.15s ease;
 
                 &:hover {
                   border-color: ${item.statusColor || meta.corDestaque};
                 }
               `}
             >
-              <div
-                className={css`
-                  display: flex;
-                  align-items: center;
-                  justify-content: space-between;
-                  gap: 6px;
-                  margin-bottom: 6px;
-                `}
-              >
+              <div>
+                {/* Etiqueta do dispositivo no topo quando há múltiplos dispositivos E múltiplas métricas */}
+                {exibirEtiquetaDispositivoTopo && (
+                  <div
+                    className={css`
+                      font-size: 9px;
+                      font-weight: 800;
+                      text-transform: uppercase;
+                      letter-spacing: 0.5px;
+                      color: ${meta.corDestaque};
+                      margin-bottom: 4px;
+                      display: flex;
+                      align-items: center;
+                      gap: 4px;
+                    `}
+                  >
+                    <span>{meta.icone}</span>
+                    <span
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {item.deviceName}
+                    </span>
+                  </div>
+                )}
+
                 <div
                   className={css`
                     display: flex;
                     align-items: center;
+                    justify-content: space-between;
                     gap: 6px;
-                    overflow: hidden;
+                    margin-bottom: 4px;
                   `}
                 >
-                  <IconeMetrica
-                    icone={item.icon}
-                    titulo={item.title}
-                    categoria={item.category}
-                  />
-                  <span
+                  <div
                     className={css`
-                      font-size: ${tamanhoAtual.titulo};
-                      font-weight: 700;
-                      text-transform: uppercase;
-                      white-space: nowrap;
+                      display: flex;
+                      align-items: center;
+                      gap: 6px;
                       overflow: hidden;
-                      text-overflow: ellipsis;
-                      color: ${tema.colors.text.secondary};
                     `}
-                    title={item.title}
                   >
-                    {item.title}
-                  </span>
+                    <IconeMetrica
+                      icone={
+                        ehMesmaMetricaMultiplosDispositivos
+                          ? meta.icone
+                          : item.icon
+                      }
+                      titulo={tituloPrincipalCelula}
+                      categoria={item.category}
+                    />
+                    <span
+                      className={css`
+                        font-size: ${tamanhoAtual.titulo};
+                        font-weight: 700;
+                        text-transform: uppercase;
+                        white-space: nowrap;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        color: ${ehMesmaMetricaMultiplosDispositivos
+                          ? options.textColor || padroes.textoPadrao
+                          : tema.colors.text.secondary};
+                      `}
+                      title={tituloPrincipalCelula}
+                    >
+                      {tituloPrincipalCelula}
+                    </span>
+                  </div>
+                  {exibirBadgeItem && item.statusBadge && (
+                    <TagStatus
+                      tag={item.statusBadge}
+                      corStatus={item.statusColor}
+                    />
+                  )}
                 </div>
-                {options.showStatusBadge !== false && item.statusBadge && (
-                  <TagStatus tag={item.statusBadge} corStatus={item.statusColor} />
+
+                {/* Subtítulo da métrica quando o título principal da célula é o nome do Servidor */}
+                {ehMesmaMetricaMultiplosDispositivos && item.deviceName && (
+                  <div
+                    className={css`
+                      font-size: 10px;
+                      color: ${tema.colors.text.secondary};
+                      margin-bottom: 4px;
+                      display: flex;
+                      align-items: center;
+                      gap: 4px;
+                    `}
+                  >
+                    {item.icon && <span>{item.icon}</span>}
+                    <span
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                      }}
+                    >
+                      {item.metricName || item.title}
+                    </span>
+                  </div>
                 )}
               </div>
 

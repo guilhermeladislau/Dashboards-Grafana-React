@@ -23,7 +23,8 @@ export const RenderizadorGrafico: React.FC<RenderizadorGraficoProps> = ({
   corPadraoTema = '#6366f1',
 }) => {
   const tipo = item.chartType;
-  const corPrincipal = opcoes.sparklineColor || item.statusColor || corPadraoTema;
+  const corPrincipal =
+    item.sparklineColor || opcoes.sparklineColor || item.statusColor || corPadraoTema;
   const dimensoes = obterDimensoesBloco(opcoes.blockSize, opcoes.blockHeight);
 
   if (tipo === 'nenhum') {
@@ -38,7 +39,7 @@ export const RenderizadorGrafico: React.FC<RenderizadorGraficoProps> = ({
       <GraficoBarra
         percentual={item.percentage ?? 50}
         nivelStatus={item.statusLevel}
-        corStatus={item.statusColor}
+        corStatus={item.sparklineColor || opcoes.sparklineColor || item.statusColor}
       />
     );
   }
@@ -115,8 +116,8 @@ export const RenderizadorGrafico: React.FC<RenderizadorGraficoProps> = ({
       <GraficoBullet
         percentual={item.percentage ?? 50}
         corStatus={corPrincipal}
-        limiarAtencao={opcoes.thresholdWarning ?? 70}
-        limiarCritico={opcoes.thresholdCritical ?? 85}
+        limiarAtencao={item.thresholdWarning ?? opcoes.thresholdWarning ?? 70}
+        limiarCritico={item.thresholdCritical ?? opcoes.thresholdCritical ?? 85}
       />
     );
   }
