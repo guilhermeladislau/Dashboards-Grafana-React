@@ -1,6 +1,10 @@
 import React from 'react';
 import { css } from '@emotion/css';
 import { MetricBlockItem, PanelOptions } from '../../types';
+import {
+  estaEmModoMultiplasMetricas,
+  estaEmModoMultiplosDispositivos,
+} from '../../utilitarios/preconfiguracoesDispositivos';
 import { BlocoConsolidadoDispositivo } from '../dispositivos/BlocoConsolidadoDispositivo';
 import { SeletorBlocoDispositivo } from '../dispositivos/SeletorBlocoDispositivo';
 import { obterEstilosGrade } from './GradeMetricas.styles';
@@ -11,11 +15,32 @@ export interface GradeMetricasProps {
 }
 
 export const GradeMetricas: React.FC<GradeMetricasProps> = ({ items, options }) => {
-  // Limita a quantidade de dispositivos/métricas exibidas se configurado
-  const itensExibidos =
-    options.maxDevices && options.maxDevices > 0
-      ? items.slice(0, options.maxDevices)
-      : items;
+  // A quantidade de dispositivos (multiDevices.count) já é aplicada no processamento dos dados
+  const itensExibidos = items;
+
+  // Vários dispositivos no mesmo card: todos os dispositivos (1 métrica cada) em um único bloco
+  if (estaEmModoMultiplosDispositivos(options)) {
+    return (
+      <BlocoConsolidadoDispositivo
+        items={itensExibidos}
+        options={options}
+        tituloCabecalhoCustomizado={itensExibidos[0]?.metricName || itensExibidos[0]?.title}
+        iconeCabecalhoCustomizado={itensExibidos[0]?.icon}
+        totalOriginal={items.length}
+      />
+    );
+  }
+
+  // Várias métricas: comportamento idêntico ao de vários dispositivos, todas as métricas no mesmo bloco
+  if (estaEmModoMultiplasMetricas(options)) {
+    return (
+      <BlocoConsolidadoDispositivo
+        items={itensExibidos}
+        options={options}
+        totalOriginal={items.length}
+      />
+    );
+  }
 
   const dispositivosCadastradosAtivos = (
     options.monitoredDevicesConfig?.devices || []

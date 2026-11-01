@@ -65,13 +65,21 @@ export const obterTamanhoResolvido = (tamanhoFonte?: PanelOptions['fontSize']) =
 
 export const obterDimensoesBloco = (
   tamanhoBloco?: BlockSize,
-  alturaCustom?: number
+  alturaCustom?: number,
+  larguraCustom?: number
 ) => {
   const config = mapaTamanhosBloco[tamanhoBloco || 'md'] || mapaTamanhosBloco.md;
+  const alturaValida =
+    alturaCustom && alturaCustom > 0 ? Math.min(800, Math.max(60, alturaCustom)) : undefined;
+  const larguraValida =
+    larguraCustom && larguraCustom > 0 ? Math.min(1200, Math.max(80, larguraCustom)) : undefined;
+
   return {
     ...config,
-    alturaMinima:
-      alturaCustom && alturaCustom > 0 ? `${alturaCustom}px` : config.alturaMinima,
+    alturaMinima: alturaValida ? `${alturaValida}px` : config.alturaMinima,
+    alturaFixa: alturaValida ? `${alturaValida}px` : undefined,
+    larguraMinimaGrade: larguraValida ? `${larguraValida}px` : config.larguraMinimaGrade,
+    larguraCard: larguraValida ? `${larguraValida}px` : undefined,
   };
 };
 

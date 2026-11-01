@@ -1,8 +1,10 @@
 import React from 'react';
 import { css } from '@emotion/css';
-import { useTheme2 } from '@grafana/ui';
+import { Icon, useTheme2 } from '@grafana/ui';
 import { MetricBlockItem, PanelOptions } from '../../types';
 import {
+  estaEmModoMultiplasMetricas,
+  estaEmModoMultiplosDispositivos,
   METADADOS_DISPOSITIVOS,
   obterDispositivoAtivo,
 } from '../../utilitarios/preconfiguracoesDispositivos';
@@ -38,9 +40,13 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
   const dispositivo = obterDispositivoAtivo(options);
   const meta = METADADOS_DISPOSITIVOS[dispositivo];
   const padroes = obterCoresPadraoBloco(tema);
-  const dimensoes = obterDimensoesBloco(options.blockSize, options.blockHeight);
+  const altura = options.cardHeight && options.cardHeight > 0 ? options.cardHeight : options.blockHeight;
+  const dimensoes = obterDimensoesBloco(options.blockSize, altura, options.cardWidth);
   const tamanhoAtual = obterTamanhoResolvido(options.fontSize);
   const familiaFonte = obterFamiliaFonteResolvida(options.fontFamily);
+
+  const emModoMultiplasMetricas = estaEmModoMultiplasMetricas(options);
+  const emModoMultiplosDispositivos = estaEmModoMultiplosDispositivos(options);
 
   // Analisa quantos dispositivos e métricas diferentes existem neste card
   const nomesDispositivosUnicos = Array.from(
@@ -51,13 +57,16 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
   );
 
   const temMultiplosDispositivos =
-    nomesDispositivosUnicos.length > 1 ||
-    (nomesDispositivosUnicos.length === 1 &&
-      items.length > 1 &&
-      metricasUnicas.length === 1);
+    !emModoMultiplasMetricas &&
+    (emModoMultiplosDispositivos ||
+      nomesDispositivosUnicos.length > 1 ||
+      (nomesDispositivosUnicos.length === 1 &&
+        items.length > 1 &&
+        metricasUnicas.length === 1));
 
   const ehMesmaMetricaMultiplosDispositivos =
-    temMultiplosDispositivos && metricasUnicas.length === 1;
+    temMultiplosDispositivos &&
+    (emModoMultiplosDispositivos || metricasUnicas.length === 1);
 
   // Contagem de status para o cabeçalho
   const qtdCritico = items.filter(
@@ -76,7 +85,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
   const tituloPrincipalCard =
     tituloCabecalhoCustomizado ||
     (ehMesmaMetricaMultiplosDispositivos
-      ? `${options.deviceName || meta.nome} — ${metricasUnicas[0]}`
+      ? `${options.deviceName || meta.nome} — ${metricasUnicas[0] || ''}`
       : options.deviceName ||
         (nomesDispositivosUnicos.length === 1
           ? nomesDispositivosUnicos[0]
@@ -88,9 +97,9 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
       ? `${nomesDispositivosUnicos.length || items.length} dispositivo(s) monitorado(s) • ${qtdOk} normal${
           qtdAtencao > 0 ? ` • ${qtdAtencao} atenção` : ''
         }${qtdCritico > 0 ? ` • ${qtdCritico} crítico` : ''}`
-      : totalOriginal && totalOriginal > items.length
-      ? `Exibindo ${items.length} de ${totalOriginal} métricas monitoradas`
-      : `${items.length} métrica(s) monitorada(s) no dispositivo`);
+      : `${items.length} métrica(s) monitorada(s) no dispositivo • ${qtdOk} normal${
+          qtdAtencao > 0 ? ` • ${qtdAtencao} atenção` : ''
+        }${qtdCritico > 0 ? ` • ${qtdCritico} crítico` : ''}`);
 
   return (
     <div
@@ -207,8 +216,19 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
             temMultiplosDispositivos &&
             Boolean(item.deviceName);
 
+          const temLink = Boolean(item.linkUrl && item.linkUrl.trim() !== '');
+          const ComponenteCelula: any = temLink ? 'a' : 'div';
+          const celulaProps = temLink
+            ? {
+                href: item.linkUrl,
+                target: item.linkTargetBlank !== false ? '_blank' : '_self',
+                rel: 'noopener noreferrer',
+                title: `Navegar para: ${item.linkUrl}`,
+              }
+            : {};
+
           return (
-            <div
+            <ComponenteCelula
               key={item.id}
               className={css`
                 display: flex;
@@ -219,13 +239,43 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
                 border-radius: 12px;
                 padding: ${dimensoes.preenchimento};
                 min-height: ${dimensoes.alturaMinima};
-                transition: border-color 0.2s ease, transform 0.15s ease;
+                transition: border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+                position: relative;
+                cursor: ${temLink ? 'pointer' : 'default'};
+                text-decoration: none;
+                color: inherit;
 
                 &:hover {
-                  border-color: ${item.statusColor || meta.corDestaque};
+                  border-color: ${item.statusColor || (temLink ? '#6366f1' : meta.corDestaque)};
+                  ${temLink ? 'box-shadow: 0 6px 20px rgba(99, 102, 241, 0.25); transform: translateY(-2px);' : ''}
                 }
               `}
+              {...celulaProps}
             >
+              {temLink && (
+                <div
+                  className={css`
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                    opacity: 0.65;
+                    transition: opacity 0.2s ease, transform 0.2s ease;
+                    z-index: 2;
+                    color: ${item.statusColor || meta.corDestaque};
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    &:hover {
+                      opacity: 1;
+                      transform: scale(1.15);
+                    }
+                  `}
+                  title={`Link ativo: ${item.linkUrl}`}
+                >
+                  <Icon name="external-link-alt" size="xs" />
+                </div>
+              )}
               <div>
                 {/* Etiqueta do dispositivo no topo quando há múltiplos dispositivos E múltiplas métricas */}
                 {exibirEtiquetaDispositivoTopo && (
@@ -397,7 +447,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
                   {item.subText}
                 </div>
               )}
-            </div>
+            </ComponenteCelula>
           );
         })}
       </div>

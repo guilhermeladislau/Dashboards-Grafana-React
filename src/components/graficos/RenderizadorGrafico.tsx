@@ -1,6 +1,7 @@
 import React from 'react';
 import { MetricBlockItem, PanelOptions } from '../../types';
 import { obterDimensoesBloco } from '../../estilos';
+import { estaEmModoMultiplasMetricas } from '../../utilitarios/preconfiguracoesDispositivos';
 import { GraficoBarra } from './GraficoBarra';
 import { GraficoCirculo } from './GraficoCirculo';
 import { GraficoArco } from './GraficoArco';
@@ -23,8 +24,10 @@ export const RenderizadorGrafico: React.FC<RenderizadorGraficoProps> = ({
   corPadraoTema = '#6366f1',
 }) => {
   const tipo = item.chartType;
-  const corPrincipal =
-    item.sparklineColor || opcoes.sparklineColor || item.statusColor || corPadraoTema;
+  const emMultiplasMetricas = estaEmModoMultiplasMetricas(opcoes);
+  const corPrincipal = emMultiplasMetricas
+    ? item.sparklineColor || item.statusColor || corPadraoTema
+    : item.sparklineColor || opcoes.sparklineColor || item.statusColor || corPadraoTema;
   const dimensoes = obterDimensoesBloco(opcoes.blockSize, opcoes.blockHeight);
 
   if (tipo === 'nenhum') {
@@ -39,7 +42,11 @@ export const RenderizadorGrafico: React.FC<RenderizadorGraficoProps> = ({
       <GraficoBarra
         percentual={item.percentage ?? 50}
         nivelStatus={item.statusLevel}
-        corStatus={item.sparklineColor || opcoes.sparklineColor || item.statusColor}
+        corStatus={
+          emMultiplasMetricas
+            ? item.sparklineColor || item.statusColor
+            : item.sparklineColor || opcoes.sparklineColor || item.statusColor
+        }
       />
     );
   }

@@ -17,12 +17,13 @@ export const obterColunasGrade = (
       return 'repeat(4, minmax(0, 1fr))';
     case 'auto':
     default:
-      return `repeat(auto-fit, minmax(${larguraMinimaGrade}, 1fr))`;
+      return `repeat(auto-fill, minmax(${larguraMinimaGrade}, 1fr))`;
   }
 };
 
 export const obterEstilosGrade = (opcoes: PanelOptions) => {
-  const dimensoes = obterDimensoesBloco(opcoes.blockSize, opcoes.blockHeight);
+  const altura = opcoes.cardHeight && opcoes.cardHeight > 0 ? opcoes.cardHeight : opcoes.blockHeight;
+  const dimensoes = obterDimensoesBloco(opcoes.blockSize, altura, opcoes.cardWidth);
   return css`
     display: grid;
     grid-template-columns: ${obterColunasGrade(opcoes.columns, dimensoes.larguraMinimaGrade)};

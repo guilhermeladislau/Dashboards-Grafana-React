@@ -41,7 +41,8 @@ function temOverrideAtivo(est?: MetricStyleOverride): boolean {
       est.suffix ||
       est.min !== undefined ||
       est.max !== undefined ||
-      est.showStatusBadge !== undefined
+      est.showStatusBadge !== undefined ||
+      (est.linkUrl && est.linkUrl.trim() !== '')
   );
 }
 
@@ -79,8 +80,22 @@ export const EditorEstilizacaoMetricas: React.FC<
   };
 
   const resetarMetrica = (chave: string) => {
-    const copia = { ...mapaEstilos };
-    delete copia[chave];
+    // No Grafana (Scenes/VizPanel), onOptionsChange faz mergeWith do objeto;
+    // deletar a chave (delete obj[chave]) mantém o valor antigo no estado do painel.
+    // Para limpar uma chave de objeto no Grafana, é obrigatório atribuir undefined explicitamente.
+    const copia: Record<string, any> = { ...mapaEstilos };
+    copia[chave] = undefined;
+    onChange(copia);
+  };
+
+  const resetarTodasMetricas = () => {
+    const copia: Record<string, any> = {};
+    Object.keys(mapaEstilos).forEach((k) => {
+      copia[k] = undefined;
+    });
+    metricasParaEstilizar.forEach((m) => {
+      copia[m.value] = undefined;
+    });
     onChange(copia);
   };
 
@@ -109,11 +124,16 @@ export const EditorEstilizacaoMetricas: React.FC<
         </span>
         {totalCustomizadas > 0 && (
           <Button
+            type="button"
             size="sm"
             variant="secondary"
             fill="text"
             icon="history"
-            onClick={() => onChange({})}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              resetarTodasMetricas();
+            }}
           >
             Resetar todas ({totalCustomizadas})
           </Button>
@@ -175,6 +195,26 @@ export const EditorEstilizacaoMetricas: React.FC<
                 value={est.seriesFilter || ''}
                 placeholder="Automático por palavra-chave"
                 onChange={(e) => atualizarMetrica(chave, { seriesFilter: e.currentTarget.value })}
+              />
+            </Field>
+
+            <Field
+              label="🔗 Link de Redirecionamento (URL)"
+              description="Torna o quadradinho desta métrica clicável (ex: /d/... ou https://... com ${host})"
+            >
+              <Input
+                value={est.linkUrl || ''}
+                placeholder="Ex: https://zabbix... ou /d/... com ${host}"
+                onChange={(e) => atualizarMetrica(chave, { linkUrl: e.currentTarget.value })}
+              />
+            </Field>
+
+            <Field label="Abrir Link em Nova Aba">
+              <Switch
+                value={est.linkTargetBlank !== false}
+                onChange={(e) =>
+                  atualizarMetrica(chave, { linkTargetBlank: e.currentTarget.checked })
+                }
               />
             </Field>
 
@@ -373,11 +413,16 @@ export const EditorEstilizacaoMetricas: React.FC<
 
             {customizado && (
               <Button
+                type="button"
                 size="sm"
                 variant="secondary"
                 fill="outline"
                 icon="history"
-                onClick={() => resetarMetrica(chave)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  resetarMetrica(chave);
+                }}
               >
                 Restaurar padrão desta métrica
               </Button>

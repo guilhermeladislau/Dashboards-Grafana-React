@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StandardEditorProps } from '@grafana/data';
-import { Field, Select, Input, Checkbox, Icon, useTheme2 } from '@grafana/ui';
+import { Button, Field, Select, Input, Checkbox, Icon, Switch, useTheme2 } from '@grafana/ui';
 import { PanelOptions, StandardOptionsGroup, StandardUnitType } from '../../types';
 
 export const OPCOES_UNIDADES: Array<{ value: StandardUnitType; label: string }> = [
@@ -52,6 +52,8 @@ export const EditorStandardOptions: React.FC<
   const min: number = grupo.min ?? opcoesRaiz.standardMin ?? 0;
   const max: number = grupo.max ?? opcoesRaiz.standardMax ?? 100;
   const noValue: string = grupo.noValue ?? opcoesRaiz.standardNoValue ?? '-';
+  const linkUrl: string = grupo.linkUrl ?? '';
+  const linkTargetBlank: boolean = grupo.linkTargetBlank !== false;
 
   const atualizar = (parcial: Partial<StandardOptionsGroup>) => {
     onChange({
@@ -64,6 +66,8 @@ export const EditorStandardOptions: React.FC<
       min,
       max,
       noValue,
+      linkUrl,
+      linkTargetBlank,
       ...parcial,
     });
   };
@@ -218,6 +222,63 @@ export const EditorStandardOptions: React.FC<
               onChange={(e) => atualizar({ noValue: e.currentTarget.value })}
             />
           </Field>
+
+          {/* 7. Link de Redirecionamento Global */}
+          <Field
+            label="🔗 Link Padrão da Métrica (URL)"
+            description="Torna o quadradinho da métrica clicável (suporta ${host}, ${deviceName}, etc.)"
+          >
+            <Input
+              value={linkUrl}
+              placeholder="Ex: https://... ou /d/... com ${host}"
+              onChange={(e) => atualizar({ linkUrl: e.currentTarget.value })}
+            />
+          </Field>
+
+          <Field label="Abrir Link em Nova Aba">
+            <Switch
+              value={linkTargetBlank}
+              onChange={(e) => atualizar({ linkTargetBlank: e.currentTarget.checked })}
+            />
+          </Field>
+
+          {(unit !== 'auto' ||
+            !decimalsAuto ||
+            displayName.trim() !== '' ||
+            prefix !== '' ||
+            suffix !== '' ||
+            min !== 0 ||
+            max !== 100 ||
+            (noValue !== '-' && noValue !== '') ||
+            (linkUrl && linkUrl.trim() !== '')) && (
+            <Button
+              type="button"
+              size="sm"
+              variant="secondary"
+              fill="outline"
+              icon="history"
+              style={{ alignSelf: 'flex-start' }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onChange({
+                  unit: 'auto',
+                  decimalsAuto: true,
+                  customDecimals: 0,
+                  displayName: '',
+                  prefix: '',
+                  suffix: '',
+                  min: 0,
+                  max: 100,
+                  noValue: '-',
+                  linkUrl: '',
+                  linkTargetBlank: true,
+                });
+              }}
+            >
+              Restaurar padrão (Standard options)
+            </Button>
+          )}
         </div>
       )}
     </div>

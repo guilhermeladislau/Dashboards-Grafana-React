@@ -69,6 +69,7 @@ export const PainelPrincipal: React.FC<PainelPrincipalProps> = ({
       title: replaceVariables(item.title),
       deviceName: item.deviceName ? replaceVariables(item.deviceName) : item.deviceName,
       metricName: item.metricName ? replaceVariables(item.metricName) : item.metricName,
+      linkUrl: item.linkUrl ? replaceVariables(item.linkUrl) : item.linkUrl,
     }));
   }, [data, opcoesResolvidas, replaceVariables]);
 

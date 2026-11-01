@@ -5,5 +5,7 @@ export * from './EditorEstilizacaoVisual';
 export * from './EditorSelecaoMetricas';
 export * from './EditorEstilizacaoMetricas';
 export * from './EditorDispositivosCard';
+export * from './EditorMultiplosDispositivos';
+export * from './EditorBlocosMetricas';
 
 

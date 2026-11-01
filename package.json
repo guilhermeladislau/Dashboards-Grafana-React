@@ -11,6 +11,11 @@
     "lint:fix": "npm run lint -- --fix && prettier --write --list-different .",
     "e2e": "playwright test",
     "server": "docker compose up --build",
+    "deploy": "bash ./atualizar-grafana.sh",
+    "deploy:rapido": "bash ./atualizar-grafana.sh --rapido",
+    "deploy:watch": "bash ./atualizar-grafana.sh --watch",
+    "sync:grafana": "wsl -u root cp -r /mnt/c/Dev/grafanaDashboards/arxcyber-dashboardcustomizadoreact-panel/dist/* /var/lib/grafana/plugins/arxcyber-dashboardcustomizadoreact-panel/ && wsl -u root systemctl restart grafana-server",
+    "build:deploy": "npm run build && npm run sync:grafana",
     "sign": "sign-plugin"
   },
   "author": "Arx cyber",

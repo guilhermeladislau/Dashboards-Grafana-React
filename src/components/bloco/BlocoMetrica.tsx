@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from '@emotion/css';
-import { useStyles2, useTheme2 } from '@grafana/ui';
+import { Icon, useStyles2, useTheme2 } from '@grafana/ui';
 import { MetricBlockItem, PanelOptions } from '../../types';
 import { obterEstilosBloco } from './BlocoMetrica.styles';
 import { CabecalhoBloco } from './CabecalhoBloco';
@@ -30,16 +30,53 @@ export const BlocoMetrica: React.FC<BlocoMetricaProps> = ({
     item.chartType === 'termometro';
 
   const etiquetaResolvida = item.deviceName || etiquetaDispositivo;
+  const temLink = Boolean(item.linkUrl && item.linkUrl.trim() !== '');
+  const ComponenteContainer: any = temLink ? 'a' : 'div';
+  const containerProps = temLink
+    ? {
+        href: item.linkUrl,
+        target: item.linkTargetBlank !== false ? '_blank' : '_self',
+        rel: 'noopener noreferrer',
+        title: `Navegar para: ${item.linkUrl}`,
+      }
+    : {};
 
   return (
-    <div
+    <ComponenteContainer
       className={estilos.bloco}
       style={
         corDispositivo && !options.borderColor
           ? { borderTop: `3px solid ${corDispositivo}` }
           : undefined
       }
+      {...containerProps}
     >
+      {/* Indicador visual de link externo sutil no canto superior */}
+      {temLink && (
+        <div
+          className={css`
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            opacity: 0.65;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            z-index: 2;
+            color: ${item.statusColor || '#818cf8'};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            &:hover {
+              opacity: 1;
+              transform: scale(1.15);
+            }
+          `}
+          title={`Link ativo: ${item.linkUrl}`}
+        >
+          <Icon name="external-link-alt" size="xs" />
+        </div>
+      )}
+
       {/* Etiqueta sutil do tipo/nome do dispositivo (quando aplicável) */}
       {etiquetaResolvida && (
         <div
@@ -119,7 +156,7 @@ export const BlocoMetrica: React.FC<BlocoMetricaProps> = ({
         corStatus={item.statusColor}
         corReserva={tema.colors.text.secondary}
       />
-    </div>
+    </ComponenteContainer>
   );
 };
 

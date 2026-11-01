@@ -8,8 +8,9 @@ import {
   obterMetricasDisponiveisParaDispositivo,
   PRECONFIGURACOES_METRICAS,
 } from '../../utilitarios/preconfiguracoesDispositivos';
+import { GavetaRetratil } from './GavetaRetratil';
 
-export const EditorSelecaoMetricas: React.FC<
+const ConteudoSelecaoMetricas: React.FC<
   StandardEditorProps<AnyDeviceMetricType[], any, PanelOptions>
 > = ({ value, onChange, context }) => {
   const tema = useTheme2();
@@ -110,29 +111,44 @@ export const EditorSelecaoMetricas: React.FC<
       {/* Botões de ação rápida */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
         <Button
+          type="button"
           size="sm"
           variant="secondary"
           fill="outline"
-          onClick={selecionarEssenciais}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selecionarEssenciais();
+          }}
           title="Seleciona as principais métricas recomendadas para este dispositivo"
         >
           ⭐ Essenciais
         </Button>
         <Button
+          type="button"
           size="sm"
           variant="secondary"
           fill="outline"
-          onClick={selecionarTodas}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            selecionarTodas();
+          }}
           title="Marca todas as métricas disponíveis para este dispositivo"
         >
           ✅ Todas ({metricasDisponiveis.length})
         </Button>
         {selecionadas.length > 0 && (
           <Button
+            type="button"
             size="sm"
             variant="destructive"
             fill="text"
-            onClick={limparSelecao}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              limparSelecao();
+            }}
             title="Limpa o filtro manual e detecta todas as séries da query automaticamente"
           >
             Limpar (Auto)
@@ -244,5 +260,35 @@ export const EditorSelecaoMetricas: React.FC<
           : '💡 As métricas marcadas acima serão monitoradas no card e podem ser estilizadas individualmente logo abaixo.'}
       </div>
     </div>
+  );
+};
+
+
+/**
+ * Subcategoria retrátil "Métricas Monitoradas no Card":
+ * exibida ao selecionar "Várias Métricas no Mesmo Card" para escolher
+ * quais métricas do mesmo dispositivo (ex: CPU, Memória, Disco do Servidor X) serão monitoradas.
+ */
+export const EditorSelecaoMetricas: React.FC<
+  StandardEditorProps<AnyDeviceMetricType[], any, PanelOptions>
+> = (props) => {
+  const opcoes = props.context?.options || ({} as Partial<PanelOptions>);
+  const metaDispositivo = METADADOS_DISPOSITIVOS[obterDispositivoAtivo(opcoes)];
+  const total = Array.isArray(props.value)
+    ? props.value.filter((m) => m !== 'auto_device').length
+    : 0;
+
+  return (
+    <GavetaRetratil
+      titulo="📋 Métricas Monitoradas no Card"
+      subtitulo={
+        total > 0
+          ? `${total} métrica(s) de ${metaDispositivo.nome} selecionada(s)`
+          : `Selecione quais métricas de ${metaDispositivo.nome} exibir neste card`
+      }
+      abertaInicial
+    >
+      <ConteudoSelecaoMetricas {...props} />
+    </GavetaRetratil>
   );
 };

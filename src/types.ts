@@ -307,6 +307,8 @@ export interface MetricBlockItem {
   icon?: string;
   deviceType: DeviceType;
   chartType: Exclude<ChartType, 'auto'>;
+  linkUrl?: string;
+  linkTargetBlank?: boolean;
 }
 
 /**
@@ -333,6 +335,8 @@ export interface MetricStyleOverride {
   min?: number;
   max?: number;
   showStatusBadge?: boolean;
+  linkUrl?: string;
+  linkTargetBlank?: boolean;
 }
 
 /**
@@ -360,6 +364,13 @@ export interface MonitoredDevicesConfigGroup {
 /**
  * Grupo de opções da subcategoria Standard Options
  */
+export interface MultiDevicesConfig {
+  /** Caixa de seleção que habilita o monitoramento de vários dispositivos no mesmo card */
+  enabled?: boolean;
+  /** Quantidade de dispositivos monitorados (0 ou vazio = todos retornados pela query) */
+  count?: number;
+}
+
 export interface StandardOptionsGroup {
   unit?: StandardUnitType;
   decimalsAuto?: boolean;
@@ -370,6 +381,38 @@ export interface StandardOptionsGroup {
   min?: number;
   max?: number;
   noValue?: string;
+  linkUrl?: string;
+  linkTargetBlank?: boolean;
+}
+
+/**
+ * Configuração de override granular por bloco ou índice de métrica/dispositivo
+ */
+export interface BlockOverrideConfig {
+  id?: string;
+  index?: number; // 1-based (ex: 3)
+  targetMatcher?: string; // ex: "3", "SRV-03", ou "3,4,5,6,7,11,16,34,49"
+  displayName?: string;
+  linkUrl?: string;
+  linkTargetBlank?: boolean;
+  unit?: StandardUnitType;
+  decimalsAuto?: boolean;
+  customDecimals?: number;
+  prefix?: string;
+  suffix?: string;
+  min?: number;
+  max?: number;
+  noValue?: string;
+  chartType?: ChartType;
+  sparklineColor?: string;
+  thresholdMode?: ThresholdMode;
+  thresholdWarning?: number;
+  thresholdCritical?: number;
+  colorOk?: string;
+  colorWarning?: string;
+  colorCritical?: string;
+  fixedMetricColor?: string;
+  showStatusBadge?: boolean;
 }
 
 /**
@@ -396,6 +439,8 @@ export interface EstilizacaoVisualGroup {
   borderColor?: string;
   blockSize?: BlockSize;
   blockHeight?: number;
+  cardWidth?: number;
+  cardHeight?: number;
   columns?: LayoutColumns;
   showStatusBadge?: boolean;
 
@@ -408,7 +453,10 @@ export interface PanelOptions {
   // 1. Seleção de Dispositivo e Modo do Card
   deviceType: DeviceType;
   cardDisplayMode: CardDisplayMode;
+  /** @deprecated Substituído por multiDevices.count (mantido para retrocompatibilidade) */
   maxDevices?: number;
+  /** Vários dispositivos no mesmo card, monitorando apenas 1 tipo de métrica */
+  multiDevices?: MultiDevicesConfig;
 
   // 2. Seleção do que monitorar por Dispositivo
   firewallMetric: FirewallMetricType;
@@ -424,6 +472,7 @@ export interface PanelOptions {
   selectedMetrics?: AnyDeviceMetricType[];
   metricStyles?: Record<string, MetricStyleOverride>;
   monitoredDevicesConfig?: MonitoredDevicesConfigGroup;
+  blockOverrides?: Record<string, BlockOverrideConfig>;
 
   // 3. Subcategoria Standard Options (agrupada no editor colapsável)
   standardOptions?: StandardOptionsGroup;
@@ -471,6 +520,8 @@ export interface PanelOptions {
   // 7. Layout e Comportamento dos Blocos
   blockSize?: BlockSize;
   blockHeight?: number;
+  cardWidth?: number;
+  cardHeight?: number;
   columns: LayoutColumns;
   showStatusBadge: boolean;
   showProgressBar: boolean;

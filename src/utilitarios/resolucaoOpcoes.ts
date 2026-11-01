@@ -60,6 +60,27 @@ export function resolverOpcoesVisuais(
         : opcoes?.blockHeight !== undefined
         ? opcoes.blockHeight
         : 0,
+    cardWidth: (() => {
+      const w = v.cardWidth !== undefined ? v.cardWidth : opcoes?.cardWidth ?? 0;
+      if (!w || isNaN(Number(w)) || Number(w) <= 0) {
+        return 0;
+      }
+      return Math.min(1200, Math.max(80, Math.round(Number(w))));
+    })(),
+    cardHeight: (() => {
+      const h =
+        v.cardHeight !== undefined
+          ? v.cardHeight
+          : opcoes?.cardHeight !== undefined
+          ? opcoes.cardHeight
+          : v.blockHeight !== undefined
+          ? v.blockHeight
+          : opcoes?.blockHeight ?? 0;
+      if (!h || isNaN(Number(h)) || Number(h) <= 0) {
+        return 0;
+      }
+      return Math.min(800, Math.max(60, Math.round(Number(h))));
+    })(),
     columns: (v.columns ?? opcoes?.columns ?? 'auto') as LayoutColumns,
     showStatusBadge:
       v.showStatusBadge !== undefined

@@ -1088,6 +1088,10 @@ export function obterDispositivoAtivo(opcoes?: Partial<PanelOptions>): DeviceTyp
 export function obterMetricaDispositivoAtiva(
   opcoes?: Partial<PanelOptions>
 ): AnyDeviceMetricType | null {
+  if (opcoes?.cardDisplayMode === 'consolidado') {
+    return null;
+  }
+
   const dispositivo = obterDispositivoAtivo(opcoes);
 
   switch (dispositivo) {
@@ -1247,8 +1251,12 @@ export function estaEmModoMultiplasMetricas(opcoes?: Partial<PanelOptions>): boo
   if (opcoes.cardDisplayMode === 'consolidado') {
     return true;
   }
-  const metricaUnica = obterMetricaDispositivoAtiva(opcoes);
-  return metricaUnica === null;
+  const dispositivo = obterDispositivoAtivo(opcoes);
+  if (dispositivo !== 'auto') {
+    const metricaUnica = obterMetricaDispositivoAtiva(opcoes);
+    return metricaUnica === null && !opcoes.multiDevices?.enabled;
+  }
+  return false;
 }
 
 /**
@@ -1368,4 +1376,43 @@ export function detectarSubTipoMetricaPorTexto(
   }
 
   return null;
+}
+
+
+/**
+ * Verifica se a caixa "Monitorar vários dispositivos no mesmo card" está marcada
+ * (quando o modo do card não está em "Várias Métricas no Mesmo Card")
+ */
+export function estaEmModoMultiplosDispositivos(opcoes?: Partial<PanelOptions>): boolean {
+  if (!opcoes || opcoes.cardDisplayMode === 'consolidado') {
+    return false;
+  }
+  return Boolean(opcoes.multiDevices?.enabled);
+}
+
+/**
+ * Quantidade de dispositivos a exibir no modo de vários dispositivos (0 = todos da query)
+ */
+export function obterQuantidadeDispositivos(opcoes?: Partial<PanelOptions>): number {
+  if (!estaEmModoMultiplosDispositivos(opcoes)) {
+    return 0;
+  }
+  const qtd = Number(opcoes?.multiDevices?.count);
+  return !isNaN(qtd) && qtd > 0 ? Math.floor(qtd) : 0;
+}
+
+/**
+ * Exibe a subcategoria retrátil de seleção de várias métricas
+ * (em "Várias Métricas no Mesmo Card" ou quando o seletor do dispositivo está em "Múltiplas Métricas")
+ */
+export function exibirSelecaoVariasMetricas(opcoes?: Partial<PanelOptions>): boolean {
+  return estaEmModoMultiplasMetricas(opcoes);
+}
+
+/**
+ * Exibe o seletor de métrica única do dispositivo ("O que Monitorar no ...")
+ * - Modo "1 Métrica por Card" (com ou sem vários dispositivos)
+ */
+export function exibirSeletorMetricaUnica(opcoes?: Partial<PanelOptions>): boolean {
+  return opcoes?.cardDisplayMode !== 'consolidado';
 }

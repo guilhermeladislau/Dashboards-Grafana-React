@@ -117,6 +117,18 @@ export const EditorEstilizacaoVisual: React.FC<
       : raiz.blockHeight !== undefined
       ? raiz.blockHeight
       : 0;
+  const cardWidth =
+    grupo.cardWidth !== undefined
+      ? grupo.cardWidth
+      : raiz.cardWidth !== undefined
+      ? raiz.cardWidth
+      : 0;
+  const cardHeight =
+    grupo.cardHeight !== undefined
+      ? grupo.cardHeight
+      : raiz.cardHeight !== undefined
+      ? raiz.cardHeight
+      : blockHeight;
   const columns: LayoutColumns = grupo.columns ?? raiz.columns ?? 'auto';
   const showStatusBadge =
     grupo.showStatusBadge !== undefined
@@ -148,6 +160,8 @@ export const EditorEstilizacaoVisual: React.FC<
       borderColor,
       blockSize,
       blockHeight,
+      cardWidth,
+      cardHeight,
       columns,
       showStatusBadge,
       fontFamily,
@@ -163,11 +177,31 @@ export const EditorEstilizacaoVisual: React.FC<
     Boolean(colorCritical) ||
     Boolean(fixedMetricColor);
 
+  const temConfigGraficoCustomizada =
+    temCoresGraficoCustomizadas ||
+    chartType !== 'auto' ||
+    thresholdMode !== 'auto' ||
+    thresholdWarning !== 70 ||
+    thresholdCritical !== 85 ||
+    !showProgressBar ||
+    !showSparkline;
+
   const temCoresPainelCustomizadas =
     Boolean(backgroundColor) ||
     Boolean(cardBackgroundColor) ||
     Boolean(textColor) ||
     Boolean(borderColor);
+
+  const temConfigPainelCustomizada =
+    temCoresPainelCustomizadas ||
+    blockSize !== 'md' ||
+    blockHeight !== 0 ||
+    cardWidth !== 0 ||
+    cardHeight !== 0 ||
+    columns !== 'auto' ||
+    !showStatusBadge;
+
+  const temFontesCustomizadas = fontFamily !== 'default' || fontSize !== 'md';
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -301,25 +335,59 @@ export const EditorEstilizacaoVisual: React.FC<
           />
         )}
 
-        {temCoresGraficoCustomizadas && (
-          <Button
-            size="sm"
-            variant="secondary"
-            fill="outline"
-            icon="history"
-            style={{ alignSelf: 'flex-start', marginTop: 4 }}
-            onClick={() =>
-              atualizar({
-                sparklineColor: '',
-                colorOk: '',
-                colorWarning: '',
-                colorCritical: '',
-                fixedMetricColor: '',
-              })
-            }
-          >
-            Restaurar todas as cores do gráfico
-          </Button>
+        {(temCoresGraficoCustomizadas || temConfigGraficoCustomizada) && (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 4 }}>
+            {temCoresGraficoCustomizadas && (
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                fill="outline"
+                icon="history"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  atualizar({
+                    sparklineColor: '',
+                    colorOk: '',
+                    colorWarning: '',
+                    colorCritical: '',
+                    fixedMetricColor: '',
+                  });
+                }}
+              >
+                Restaurar todas as cores do gráfico
+              </Button>
+            )}
+            {temConfigGraficoCustomizada && (
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                fill="outline"
+                icon="history"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  atualizar({
+                    chartType: 'auto',
+                    sparklineColor: '',
+                    showProgressBar: true,
+                    showSparkline: true,
+                    thresholdMode: 'auto',
+                    thresholdWarning: 70,
+                    thresholdCritical: 85,
+                    colorOk: '',
+                    colorWarning: '',
+                    colorCritical: '',
+                    fixedMetricColor: '',
+                  });
+                }}
+              >
+                Restaurar padrão do gráfico
+              </Button>
+            )}
+          </div>
         )}
       </GavetaRetratil>
 
@@ -373,19 +441,22 @@ export const EditorEstilizacaoVisual: React.FC<
 
         {temCoresPainelCustomizadas && (
           <Button
+            type="button"
             size="sm"
             variant="secondary"
             fill="outline"
             icon="history"
             style={{ alignSelf: 'flex-start', marginTop: 4, marginBottom: 8 }}
-            onClick={() =>
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               atualizar({
                 backgroundColor: '',
                 cardBackgroundColor: '',
                 textColor: '',
                 borderColor: '',
-              })
-            }
+              });
+            }}
           >
             Restaurar todas as cores do painel
           </Button>
@@ -403,23 +474,54 @@ export const EditorEstilizacaoVisual: React.FC<
           />
         </Field>
 
-        <Field
-          label="Altura Mínima Customizada dos Blocos (px)"
-          description="Define uma altura mínima específica em pixels para os blocos (0 = automático)"
-        >
-          <Input
-            type="number"
-            min={0}
-            max={1000}
-            step={10}
-            placeholder="0 = Automático"
-            value={blockHeight === 0 ? '' : blockHeight}
-            onChange={(e) => {
-              const val = e.currentTarget.value;
-              atualizar({ blockHeight: val === '' ? 0 : Number(val) });
-            }}
-          />
-        </Field>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+          <Field
+            label="Largura do Card (px)"
+            description="Mais largo ou estreito (máx: 1200px. 0 = auto)"
+          >
+            <Input
+              type="number"
+              min={0}
+              max={1200}
+              step={10}
+              placeholder="0 = Auto"
+              value={cardWidth === 0 ? '' : cardWidth}
+              onChange={(e) => {
+                const val = e.currentTarget.value;
+                if (val === '') {
+                  atualizar({ cardWidth: 0 });
+                } else {
+                  const num = Number(val);
+                  atualizar({ cardWidth: Math.min(1200, Math.max(0, num)) });
+                }
+              }}
+            />
+          </Field>
+
+          <Field
+            label="Altura do Card (px)"
+            description="Mais longo ou curto (máx: 800px. 0 = auto)"
+          >
+            <Input
+              type="number"
+              min={0}
+              max={800}
+              step={10}
+              placeholder="0 = Auto"
+              value={cardHeight === 0 ? '' : cardHeight}
+              onChange={(e) => {
+                const val = e.currentTarget.value;
+                if (val === '') {
+                  atualizar({ cardHeight: 0, blockHeight: 0 });
+                } else {
+                  const num = Number(val);
+                  const validado = Math.min(800, Math.max(0, num));
+                  atualizar({ cardHeight: validado, blockHeight: validado });
+                }
+              }}
+            />
+          </Field>
+        </div>
 
         <Field
           label="Distribuição de Colunas"
@@ -442,6 +544,37 @@ export const EditorEstilizacaoVisual: React.FC<
             onChange={(e) => atualizar({ showStatusBadge: e.currentTarget.checked })}
           />
         </Field>
+
+        {temConfigPainelCustomizada && (
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            fill="outline"
+            icon="history"
+            style={{ alignSelf: 'flex-start', marginTop: 4 }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              atualizar({
+                backgroundColor: '',
+                cardBackgroundColor: '',
+                textColor: '',
+                borderColor: '',
+                blockSize: 'md',
+                blockHeight: 0,
+                cardWidth: 0,
+                cardHeight: 0,
+                columns: 'auto',
+                showStatusBadge: true,
+                showProgressBar: true,
+                showSparkline: true,
+              });
+            }}
+          >
+            Restaurar padrão do painel
+          </Button>
+        )}
       </GavetaRetratil>
 
       {/* =================================================================== */}
@@ -474,6 +607,27 @@ export const EditorEstilizacaoVisual: React.FC<
             fullWidth
           />
         </Field>
+
+        {temFontesCustomizadas && (
+          <Button
+            type="button"
+            size="sm"
+            variant="secondary"
+            fill="outline"
+            icon="history"
+            style={{ alignSelf: 'flex-start', marginTop: 4 }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              atualizar({
+                fontFamily: 'default',
+                fontSize: 'md',
+              });
+            }}
+          >
+            Restaurar padrão de fontes
+          </Button>
+        )}
       </GavetaRetratil>
     </div>
   );

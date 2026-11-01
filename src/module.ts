@@ -6,9 +6,14 @@ import {
   EditorEstilizacaoVisual,
   EditorSelecaoMetricas,
   EditorEstilizacaoMetricas,
-  EditorDispositivosCard,
+  EditorMultiplosDispositivos,
+  EditorBlocosMetricas,
 } from './components';
-import { estaEmModoMultiplasMetricas } from './utilitarios/preconfiguracoesDispositivos';
+import {
+  estaEmModoMultiplasMetricas,
+  exibirSelecaoVariasMetricas,
+  exibirSeletorMetricaUnica,
+} from './utilitarios/preconfiguracoesDispositivos';
 
 export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
   .setPanelOptions((builder) => {
@@ -43,7 +48,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           path: 'cardDisplayMode',
           name: 'Modo de Exibição do Card',
           description:
-            'Escolha entre exibir um card individual por métrica ou agrupar várias métricas dentro de um único card do dispositivo',
+            '1 Métrica por Card: exibe uma única métrica. Várias Métricas: monitora várias informações do mesmo dispositivo (ex: CPU, Memória e Disco do Servidor X) em um único card',
           defaultValue: 'individual',
           settings: {
             options: [
@@ -53,35 +58,53 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           },
         })
 
-        .addSelect({
+        // =====================================================================
+        // 1.1 SUBCATEGORIA RETRÁTIL: QUAIS MÉTRICAS DO DISPOSITIVO MONITORAR
+        //     (exibida somente em "Várias Métricas no Mesmo Card")
+        // =====================================================================
+        .addCustomEditor({
+          id: 'selectedMetricsEditor',
+          path: 'selectedMetrics',
+          name: '',
           category: ['Dispositivo e Monitoramento'],
-          path: 'maxDevices',
-          name: 'Quantidade de Dispositivos / Métricas Monitoradas',
+          editor: EditorSelecaoMetricas,
+          defaultValue: [],
+          showIf: (config) => exibirSelecaoVariasMetricas(config),
+        })
+
+        .addCustomEditor({
+          id: 'metricStylesEditor',
+          path: 'metricStyles',
+          name: 'Estilizar Métricas Individualmente',
           description:
-            'Limite de dispositivos ou métricas exibidas no card/painel (selecione "Todos" para ilimitado)',
-          defaultValue: 0,
-          settings: {
-            options: [
-              { value: 0, label: '✨ Todos os Dispositivos (Sem Limite)' },
-              { value: 1, label: '1 Dispositivo' },
-              { value: 2, label: '2 Dispositivos' },
-              { value: 3, label: '3 Dispositivos' },
-              { value: 4, label: '4 Dispositivos' },
-              { value: 5, label: '5 Dispositivos' },
-              { value: 6, label: '6 Dispositivos' },
-              { value: 8, label: '8 Dispositivos' },
-              { value: 10, label: '10 Dispositivos' },
-              { value: 12, label: '12 Dispositivos' },
-              { value: 16, label: '16 Dispositivos' },
-              { value: 20, label: '20 Dispositivos' },
-              { value: 30, label: '30 Dispositivos' },
-              { value: 50, label: '50 Dispositivos' },
-            ],
-          },
+            'Personalize gráfico, cores, limiares, unidade e título para cada métrica monitorada individualmente',
+          category: ['Dispositivo e Monitoramento'],
+          editor: EditorEstilizacaoMetricas,
+          defaultValue: {},
+          showIf: (config) => estaEmModoMultiplasMetricas(config),
         })
 
         // =====================================================================
-        // 2. O QUE MONITORAR POR DISPOSITIVO (MÉTRICAS PRÉ-CONFIGURADAS)
+        // 1.2 VÁRIOS DISPOSITIVOS NO MESMO CARD (INDEPENDENTE DO MODO DE EXIBIÇÃO)
+        //     Caixa de seleção + quantidade de dispositivos; a métrica (1 único tipo)
+        //     é escolhida logo abaixo no seletor "O que Monitorar no ..."
+        // =====================================================================
+        .addCustomEditor({
+          id: 'multiDevicesEditor',
+          path: 'multiDevices',
+          name: 'Vários Dispositivos no Mesmo Card',
+          category: ['Dispositivo e Monitoramento'],
+          editor: EditorMultiplosDispositivos,
+          defaultValue: {
+            enabled: false,
+            count: undefined,
+          },
+          showIf: (config) => config.cardDisplayMode !== 'consolidado',
+        })
+
+        // =====================================================================
+        // 2. O QUE MONITORAR POR DISPOSITIVO (MÉTRICA ÚNICA PRÉ-CONFIGURADA)
+        //    Exibido em "1 Métrica por Card" ou quando há vários dispositivos no card
         // =====================================================================
 
         // 2.1 Firewall
@@ -91,7 +114,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar no Firewall',
           description: 'Métrica pré-configurada com unidade, ícone, gráfico e limiares ideais',
           defaultValue: 'fw_cpu',
-          showIf: (config) => config.deviceType === 'firewall',
+          showIf: (config) => config.deviceType === 'firewall' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -115,7 +138,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar na VM',
           description: 'Métrica pré-configurada para Máquinas Virtuais',
           defaultValue: 'vm_cpu_uso',
-          showIf: (config) => config.deviceType === 'vm',
+          showIf: (config) => config.deviceType === 'vm' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -140,7 +163,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar no Proxy',
           description: 'Métrica pré-configurada para Servidores Proxy e Balanceadores',
           defaultValue: 'proxy_requisicoes_seg',
-          showIf: (config) => config.deviceType === 'proxy',
+          showIf: (config) => config.deviceType === 'proxy' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -164,7 +187,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar no Host',
           description: 'Métrica pré-configurada para Hosts Físicos e Hipervisores',
           defaultValue: 'host_cpu_uso',
-          showIf: (config) => config.deviceType === 'host',
+          showIf: (config) => config.deviceType === 'host' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -189,7 +212,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar no Servidor',
           description: 'Métrica pré-configurada para Servidores Windows e Linux',
           defaultValue: 'srv_cpu_uso',
-          showIf: (config) => config.deviceType === 'servidor',
+          showIf: (config) => config.deviceType === 'servidor' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -216,7 +239,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar no Access Point',
           description: 'Métrica pré-configurada para Pontos de Acesso Wi-Fi',
           defaultValue: 'ap_clientes',
-          showIf: (config) => config.deviceType === 'access_point',
+          showIf: (config) => config.deviceType === 'access_point' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -240,7 +263,7 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           name: 'O que Monitorar na Porta de Rede',
           description: 'Métrica pré-configurada para Portas de Switch e Interfaces de Roteador',
           defaultValue: 'porta_trafego_in',
-          showIf: (config) => config.deviceType === 'porta_rede',
+          showIf: (config) => config.deviceType === 'porta_rede' && exibirSeletorMetricaUnica(config),
           settings: {
             options: [
               { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
@@ -253,51 +276,6 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
               { value: 'porta_velocidade', label: '⚡ Velocidade Negociada (100M / 1G / 10G)' },
               { value: 'porta_poe_watts', label: '🔋 Consumo PoE da Porta (Watts)' },
             ],
-          },
-        })
-
-        // =====================================================================
-        // 2.8 SELEÇÃO DE MÚLTIPLAS MÉTRICAS E ESTILIZAÇÃO INDIVIDUAL (PARALELA)
-        // =====================================================================
-        .addCustomEditor({
-          id: 'selectedMetricsEditor',
-          path: 'selectedMetrics',
-          name: 'Quais Métricas Monitorar',
-          description:
-            'Selecione uma ou mais métricas específicas para monitorar no card (habilitado ao selecionar Várias Métricas)',
-          category: ['Dispositivo e Monitoramento'],
-          editor: EditorSelecaoMetricas,
-          defaultValue: [],
-          showIf: (config) => estaEmModoMultiplasMetricas(config),
-        })
-
-        .addCustomEditor({
-          id: 'metricStylesEditor',
-          path: 'metricStyles',
-          name: 'Estilizar Métricas Individualmente',
-          description:
-            'Personalize gráfico, cores, limiares, unidade e título para cada métrica monitorada individualmente',
-          category: ['Dispositivo e Monitoramento'],
-          editor: EditorEstilizacaoMetricas,
-          defaultValue: {},
-          showIf: (config) => estaEmModoMultiplasMetricas(config),
-        })
-
-        // =====================================================================
-        // 2.9 MÚLTIPLOS DISPOSITIVOS NO CARD (EX: 10+ SERVIDORES EM UM ÚNICO CARD)
-        // =====================================================================
-        .addCustomEditor({
-          id: 'monitoredDevicesConfigEditor',
-          path: 'monitoredDevicesConfig',
-          name: 'Dispositivos Monitorados no Card',
-          description:
-            'Adicione múltiplos dispositivos (ex: 10+ servidores) para exibir o monitoramento individual de todos dentro de um único card',
-          category: ['Dispositivo e Monitoramento'],
-          editor: EditorDispositivosCard,
-          defaultValue: {
-            devices: [],
-            groupInSingleCard: true,
-            consolidatedGroupMode: 'unico_card',
           },
         })
 
@@ -333,6 +311,18 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
         })
 
         // =====================================================================
+        // 3.1 SUBCATEGORIA RETRÁTIL: CONFIGURAÇÃO & LINKS POR BLOCO
+        // =====================================================================
+        .addCustomEditor({
+          id: 'blockOverridesEditor',
+          path: 'blockOverrides',
+          name: '',
+          category: ['Dispositivo e Monitoramento'],
+          editor: EditorBlocosMetricas,
+          defaultValue: {},
+        })
+
+        // =====================================================================
         // 4. ESTILIZAÇÃO VISUAL (SUBRETRAIS: GRÁFICOS, PAINEL E FONTES)
         // =====================================================================
         .addCustomEditor({
@@ -359,6 +349,8 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
             borderColor: '',
             blockSize: 'md',
             blockHeight: 0,
+            cardWidth: 0,
+            cardHeight: 0,
             columns: 'auto',
             showStatusBadge: true,
             fontFamily: 'default',

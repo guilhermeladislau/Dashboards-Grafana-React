@@ -77,12 +77,17 @@ export const ControleCorComReset: React.FC<ControleCorComResetProps> = ({
 
         {temValorCustomizado ? (
           <Button
+            type="button"
             size="sm"
             variant="secondary"
             fill="outline"
             icon="history"
             title="Voltar à cor padrão que estava"
-            onClick={onReset}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onReset();
+            }}
           >
             Voltar ao padrão
           </Button>
