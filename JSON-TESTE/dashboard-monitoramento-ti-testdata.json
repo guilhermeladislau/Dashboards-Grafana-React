@@ -1,0 +1,2222 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 100,
+      "title": "🖥️ Servidores de Aplicação e Banco de Dados (Windows / Linux)",
+      "type": "row"
+    },
+    {
+      "id": 1,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 1 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-PROD-APP01 • CPU",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "35, 42, 50, 58, 65, 62, 58, 64",
+          "alias": "SRV-PROD-APP01: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-PROD-APP01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_cpu_uso",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-PROD-APP01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "circulo",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 1 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-PROD-APP01 • Memória RAM",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "60, 64, 70, 75, 80, 83, 86, 88",
+          "alias": "SRV-PROD-APP01: Uso de Memória RAM (%)",
+          "labels": "host=SRV-PROD-APP01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_memoria_uso",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-PROD-APP01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "barra",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 1 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-PROD-DB01 • Armazenamento Disco",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "50, 54, 58, 62, 68, 71, 74, 76",
+          "alias": "SRV-PROD-DB01: Uso de Disco / Volume (%)",
+          "labels": "host=SRV-PROD-DB01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_disco_uso",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-PROD-DB01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "torre",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 1 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-PROD-APP01 • Conectividade ICMP",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "1, 1, 1, 1, 1, 1, 1, 1",
+          "alias": "SRV-PROD-APP01: Conectividade ICMP Ping",
+          "labels": "host=SRV-PROD-APP01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_status_ping",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-PROD-APP01",
+        "standardOptions": {
+          "unit": "status",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 1,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "nenhum",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 1,
+          "thresholdCritical": 0,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 5,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 6 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-PROD-APP01 • Tráfego de Rede",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "145000000, 210000000, 280000000, 390000000, 460000000, 520000000",
+          "alias": "SRV-PROD-APP01: Tráfego de Rede do Servidor",
+          "labels": "host=SRV-PROD-APP01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_rede_trafego",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-PROD-APP01",
+        "standardOptions": {
+          "unit": "bps",
+          "decimalsAuto": true,
+          "customDecimals": 2,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 1000000000,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "area",
+          "sparklineColor": "#6366f1",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "fixo",
+          "thresholdWarning": 70,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "#6366f1",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 6 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-PROD-DB01 • Latência de Disco",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "2.4, 3.1, 4.5, 6.2, 8.8, 10.5, 12.4",
+          "alias": "SRV-PROD-DB01: Latência de Disco",
+          "labels": "host=SRV-PROD-DB01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_disco_latencia",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-PROD-DB01",
+        "standardOptions": {
+          "unit": "ms",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "linha",
+          "sparklineColor": "#f59e0b",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 20,
+          "thresholdCritical": 50,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "gridPos": { "h": 5, "w": 12, "x": 12, "y": 6 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SRV-CLUSTER-SQL01 • Card Consolidado (Todas as Métricas)",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "42, 48, 55, 62, 68",
+          "alias": "SRV-CLUSTER-SQL01: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-CLUSTER-SQL01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "65, 70, 74, 78, 81",
+          "alias": "SRV-CLUSTER-SQL01: Uso de Memória RAM (%)",
+          "labels": "host=SRV-CLUSTER-SQL01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "52, 54, 56, 58, 62",
+          "alias": "SRV-CLUSTER-SQL01: Uso de Disco / Volume (%)",
+          "labels": "host=SRV-CLUSTER-SQL01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "1, 1, 1, 1, 1",
+          "alias": "SRV-CLUSTER-SQL01: Conectividade ICMP Ping",
+          "labels": "host=SRV-CLUSTER-SQL01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "consolidado",
+        "selectedMetrics": ["srv_cpu_uso", "srv_memoria_uso", "srv_disco_uso", "srv_status_ping"],
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SRV-CLUSTER-SQL01",
+        "estilizacaoVisual": {
+          "chartType": "auto",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 11 },
+      "id": 200,
+      "title": "🛡️ Firewall & Segurança de Borda (FortiGate / pfSense / Sophos)",
+      "type": "row"
+    },
+    {
+      "id": 8,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 12 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • Status Geral",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "1, 1, 1, 1, 1, 1",
+          "alias": "FW-BORD-MATRIZ: Status do Firewall",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "firewallMetric": "fw_status",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "standardOptions": {
+          "unit": "status",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 1,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "nenhum",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 1,
+          "thresholdCritical": 0,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 9,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 12 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • CPU Firewall",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "28, 34, 40, 45, 48, 52",
+          "alias": "FW-BORD-MATRIZ: Uso de CPU do Firewall (%)",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "firewallMetric": "fw_cpu",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "circulo",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 10,
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 12 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • Sessões Ativas",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "14500, 19200, 26000, 34500, 39800, 42150",
+          "alias": "FW-BORD-MATRIZ: Sessões Concorrentes Ativas",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "firewallMetric": "fw_sessoes",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "standardOptions": {
+          "unit": "numero",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100000,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "area",
+          "sparklineColor": "#06b6d4",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "fixo",
+          "thresholdWarning": 50000,
+          "thresholdCritical": 100000,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "#06b6d4",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 12 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • Tráfego WAN Download",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "420000000, 580000000, 710000000, 840000000, 920000000",
+          "alias": "FW-BORD-MATRIZ: Tráfego WAN Download / Entrada (bps)",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "firewallMetric": "fw_trafego_wan_in",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "standardOptions": {
+          "unit": "bps",
+          "decimalsAuto": true,
+          "customDecimals": 2,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 1000000000,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "area",
+          "sparklineColor": "#10b981",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "fixo",
+          "thresholdWarning": 80,
+          "thresholdCritical": 95,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "#10b981",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 17 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • Túneis VPN",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "1, 1, 1, 1, 1",
+          "alias": "FW-BORD-MATRIZ: Status de Túneis VPN (IPsec / SSL)",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "firewallMetric": "fw_vpn_status",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "standardOptions": {
+          "unit": "status",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 1,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "nenhum",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 1,
+          "thresholdCritical": 0,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 17 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • Ataques Bloqueados",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "8, 14, 21, 29, 36, 42",
+          "alias": "FW-BORD-MATRIZ: Ameaças / Ataques Bloqueados (IPS)",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "individual",
+        "firewallMetric": "fw_ameacas_bloqueadas",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "standardOptions": {
+          "unit": "numero",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "torre",
+          "sparklineColor": "#ef4444",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 15,
+          "thresholdCritical": 40,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "gridPos": { "h": 5, "w": 12, "x": 12, "y": 17 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "FW-BORD-MATRIZ • Visão Consolidada Firewall",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "35, 42, 48, 52",
+          "alias": "FW-BORD-MATRIZ: Uso de CPU do Firewall (%)",
+          "labels": "host=FW-BORD-MATRIZ"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "50, 54, 58, 62",
+          "alias": "FW-BORD-MATRIZ: Uso de Memória do Firewall (%)",
+          "labels": "host=FW-BORD-MATRIZ"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "28000, 32000, 38000, 42150",
+          "alias": "FW-BORD-MATRIZ: Sessões Concorrentes Ativas",
+          "labels": "host=FW-BORD-MATRIZ"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "600000000, 750000000, 850000000, 920000000",
+          "alias": "FW-BORD-MATRIZ: Tráfego WAN Download / Entrada (bps)",
+          "labels": "host=FW-BORD-MATRIZ"
+        }
+      ],
+      "options": {
+        "deviceType": "firewall",
+        "cardDisplayMode": "consolidado",
+        "selectedMetrics": ["fw_cpu", "fw_memoria", "fw_sessoes", "fw_trafego_wan_in"],
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "FW-BORD-MATRIZ",
+        "estilizacaoVisual": {
+          "chartType": "auto",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 22 },
+      "id": 300,
+      "title": "🖧 Virtualização & Hipervisores (Hosts Físicos & VMs)",
+      "type": "row"
+    },
+    {
+      "id": 15,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 23 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "HOST-ESXI-01 • CPU Física",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "52, 58, 64, 70, 76",
+          "alias": "HOST-ESXI-01: Uso de CPU Física (%)",
+          "labels": "host=HOST-ESXI-01"
+        }
+      ],
+      "options": {
+        "deviceType": "host",
+        "cardDisplayMode": "individual",
+        "hostMetric": "host_cpu_uso",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "HOST-ESXI-01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "circulo",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 16,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 23 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "HOST-ESXI-01 • Temperatura Chassi",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "42, 46, 50, 54, 58",
+          "alias": "HOST-ESXI-01: Temperatura do Hardware (°C)",
+          "labels": "host=HOST-ESXI-01"
+        }
+      ],
+      "options": {
+        "deviceType": "host",
+        "cardDisplayMode": "individual",
+        "hostMetric": "host_temperatura",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "HOST-ESXI-01",
+        "standardOptions": {
+          "unit": "celsius",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "termometro",
+          "sparklineColor": "#ef4444",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 65,
+          "thresholdCritical": 80,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 17,
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 23 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "HOST-ESXI-01 • Datastore SAN",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "60, 64, 68, 71, 74",
+          "alias": "HOST-ESXI-01: Uso de Datastore / Storage (%)",
+          "labels": "host=HOST-ESXI-01"
+        }
+      ],
+      "options": {
+        "deviceType": "host",
+        "cardDisplayMode": "individual",
+        "hostMetric": "host_datastore_uso",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "HOST-ESXI-01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "torre",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 18,
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 23 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "VM-ERP-PROD • CPU Contenção (Ready)",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "2.1, 3.4, 4.8, 6.5, 7.8",
+          "alias": "VM-ERP-PROD: CPU Ready / Contenção (%)",
+          "labels": "host=VM-ERP-PROD"
+        }
+      ],
+      "options": {
+        "deviceType": "vm",
+        "cardDisplayMode": "individual",
+        "vmMetric": "vm_cpu_ready",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "VM-ERP-PROD",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 2,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 25,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "bullet",
+          "sparklineColor": "#f59e0b",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 5,
+          "thresholdCritical": 10,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 19,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 28 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "VM-ERP-PROD • vCPU Alocada",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "35, 44, 52, 60, 68",
+          "alias": "VM-ERP-PROD: Uso de vCPU da VM (%)",
+          "labels": "host=VM-ERP-PROD"
+        }
+      ],
+      "options": {
+        "deviceType": "vm",
+        "cardDisplayMode": "individual",
+        "vmMetric": "vm_cpu_uso",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "VM-ERP-PROD",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "arco",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 28 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "VM-ERP-PROD • IOPS de Armazenamento",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "420, 680, 950, 1200, 1450",
+          "alias": "VM-ERP-PROD: IOPS de Disco Virtual",
+          "labels": "host=VM-ERP-PROD"
+        }
+      ],
+      "options": {
+        "deviceType": "vm",
+        "cardDisplayMode": "individual",
+        "vmMetric": "vm_iops",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "VM-ERP-PROD",
+        "standardOptions": {
+          "unit": "iops",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 2000,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "area",
+          "sparklineColor": "#8b5cf6",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "fixo",
+          "thresholdWarning": 500,
+          "thresholdCritical": 1000,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "#8b5cf6",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "gridPos": { "h": 5, "w": 12, "x": 12, "y": 28 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "VM-ERP-PROD • Visão Consolidada VM",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "45, 52, 60, 68",
+          "alias": "VM-ERP-PROD: Uso de vCPU da VM (%)",
+          "labels": "host=VM-ERP-PROD"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "3.2, 4.5, 6.2, 7.8",
+          "alias": "VM-ERP-PROD: CPU Ready / Contenção (%)",
+          "labels": "host=VM-ERP-PROD"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "65, 72, 78, 82",
+          "alias": "VM-ERP-PROD: Uso de Memória RAM da VM (%)",
+          "labels": "host=VM-ERP-PROD"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "58, 62, 66, 70",
+          "alias": "VM-ERP-PROD: Espaço em Disco Usado (%)",
+          "labels": "host=VM-ERP-PROD"
+        }
+      ],
+      "options": {
+        "deviceType": "vm",
+        "cardDisplayMode": "consolidado",
+        "selectedMetrics": ["vm_cpu_uso", "vm_cpu_ready", "vm_memoria_uso", "vm_disco_usado"],
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "VM-ERP-PROD",
+        "estilizacaoVisual": {
+          "chartType": "auto",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 33 },
+      "id": 400,
+      "title": "🌐 Conectividade: Proxy Web, Wi-Fi e Portas de Switch",
+      "type": "row"
+    },
+    {
+      "id": 22,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 34 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "PROXY-EDGE-01 • Taxa de Cache Hit",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "94, 92, 90, 88, 88",
+          "alias": "PROXY-EDGE-01: Taxa de Cache Hit (%)",
+          "labels": "host=PROXY-EDGE-01"
+        }
+      ],
+      "options": {
+        "deviceType": "proxy",
+        "cardDisplayMode": "individual",
+        "proxyMetric": "proxy_cache_hit",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "PROXY-EDGE-01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "anel",
+          "sparklineColor": "#06b6d4",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "invertido",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 34 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "PROXY-EDGE-01 • Requisições por Segundo",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "450, 720, 980, 1150, 1380",
+          "alias": "PROXY-EDGE-01: Requisições por Segundo (req/s)",
+          "labels": "host=PROXY-EDGE-01"
+        }
+      ],
+      "options": {
+        "deviceType": "proxy",
+        "cardDisplayMode": "individual",
+        "proxyMetric": "proxy_requisicoes_seg",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "PROXY-EDGE-01",
+        "standardOptions": {
+          "unit": "reqps",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 2000,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "area",
+          "sparklineColor": "#3b82f6",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "fixo",
+          "thresholdWarning": 500,
+          "thresholdCritical": 1000,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "#3b82f6",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 24,
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 34 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "AP-CORPORATIVO-01 • Clientes Wi-Fi Ativos",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "32, 48, 56, 68, 78",
+          "alias": "AP-CORPORATIVO-01: Clientes Wi-Fi Conectados",
+          "labels": "host=AP-CORPORATIVO-01"
+        }
+      ],
+      "options": {
+        "deviceType": "access_point",
+        "cardDisplayMode": "individual",
+        "accessPointMetric": "ap_clientes",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "AP-CORPORATIVO-01",
+        "standardOptions": {
+          "unit": "clientes",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "bullet",
+          "sparklineColor": "#f59e0b",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 45,
+          "thresholdCritical": 70,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 25,
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 34 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "AP-CORPORATIVO-01 • Qualidade de Sinal",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "96, 92, 88, 85, 82",
+          "alias": "AP-CORPORATIVO-01: Qualidade do Sinal Wi-Fi (%)",
+          "labels": "host=AP-CORPORATIVO-01"
+        }
+      ],
+      "options": {
+        "deviceType": "access_point",
+        "cardDisplayMode": "individual",
+        "accessPointMetric": "ap_sinal_qualidade",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "AP-CORPORATIVO-01",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "anel",
+          "sparklineColor": "#f59e0b",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "invertido",
+          "thresholdWarning": 60,
+          "thresholdCritical": 75,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 26,
+      "gridPos": { "h": 5, "w": 6, "x": 0, "y": 39 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SW-CORE-01 [Gi1/0/24] • Tráfego Uplink",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "380000000, 520000000, 680000000, 810000000, 890000000",
+          "alias": "SW-CORE-01: Tráfego de Entrada / RX (bps)",
+          "labels": "host=SW-CORE-01"
+        }
+      ],
+      "options": {
+        "deviceType": "porta_rede",
+        "cardDisplayMode": "individual",
+        "portaRedeMetric": "porta_trafego_in",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SW-CORE-01 [Gi1/0/24]",
+        "standardOptions": {
+          "unit": "bps",
+          "decimalsAuto": true,
+          "customDecimals": 2,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 1000000000,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "linha",
+          "sparklineColor": "#ec4899",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "fixo",
+          "thresholdWarning": 70,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "#ec4899",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 27,
+      "gridPos": { "h": 5, "w": 6, "x": 6, "y": 39 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SW-CORE-01 [Gi1/0/24] • Utilização Porta",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "45, 58, 68, 76, 84",
+          "alias": "SW-CORE-01: Utilização da Banda da Porta (%)",
+          "labels": "host=SW-CORE-01"
+        }
+      ],
+      "options": {
+        "deviceType": "porta_rede",
+        "cardDisplayMode": "individual",
+        "portaRedeMetric": "porta_utilizacao_pct",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SW-CORE-01 [Gi1/0/24]",
+        "standardOptions": {
+          "unit": "percent",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "barra",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 28,
+      "gridPos": { "h": 5, "w": 6, "x": 12, "y": 39 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SW-CORE-01 [Gi1/0/48] • Consumo PoE",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "14.2, 17.5, 20.1, 23.4, 25.1",
+          "alias": "SW-CORE-01: Consumo PoE da Porta (Watts)",
+          "labels": "host=SW-CORE-01"
+        }
+      ],
+      "options": {
+        "deviceType": "porta_rede",
+        "cardDisplayMode": "individual",
+        "portaRedeMetric": "porta_poe_watts",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SW-CORE-01 [Gi1/0/48]",
+        "standardOptions": {
+          "unit": "watts",
+          "decimalsAuto": true,
+          "customDecimals": 1,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 30,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "barra",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 20,
+          "thresholdCritical": 27,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 29,
+      "gridPos": { "h": 5, "w": 6, "x": 18, "y": 39 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "SW-CORE-01 [Gi1/0/24] • Erros CRC",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "0, 0, 0, 0, 0",
+          "alias": "SW-CORE-01: Erros CRC / Descartes na Porta",
+          "labels": "host=SW-CORE-01"
+        }
+      ],
+      "options": {
+        "deviceType": "porta_rede",
+        "cardDisplayMode": "individual",
+        "portaRedeMetric": "porta_erros",
+        "overrideCardTitleWithPreset": true,
+        "deviceName": "SW-CORE-01 [Gi1/0/24]",
+        "standardOptions": {
+          "unit": "numero",
+          "decimalsAuto": true,
+          "customDecimals": 0,
+          "displayName": "",
+          "prefix": "",
+          "suffix": "",
+          "min": 0,
+          "max": 100,
+          "noValue": "-"
+        },
+        "estilizacaoVisual": {
+          "chartType": "torre",
+          "sparklineColor": "#22c55e",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 1,
+          "thresholdCritical": 10,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 44 },
+      "id": 500,
+      "title": "📦 Monitoramento de Múltiplos Dispositivos no Mesmo Card",
+      "type": "row"
+    },
+    {
+      "id": 30,
+      "gridPos": { "h": 6, "w": 12, "x": 0, "y": 45 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "Cluster Web • Comparativo de CPU (5 Servidores)",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "35, 42, 48, 54",
+          "alias": "SRV-WEB-01: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-WEB-01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "50, 62, 70, 82",
+          "alias": "SRV-WEB-02: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-WEB-02"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "60, 68, 76, 88",
+          "alias": "SRV-DB-01: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-DB-01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "22, 28, 35, 41",
+          "alias": "SRV-DB-02: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-DB-02"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "E",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "40, 48, 55, 65",
+          "alias": "SRV-API-01: Uso de CPU do Servidor (%)",
+          "labels": "host=SRV-API-01"
+        }
+      ],
+      "options": {
+        "deviceType": "servidor",
+        "cardDisplayMode": "individual",
+        "servidorMetric": "srv_cpu_uso",
+        "multiDevices": {
+          "enabled": true,
+          "count": 5
+        },
+        "overrideCardTitleWithPreset": true,
+        "estilizacaoVisual": {
+          "chartType": "barra",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 70,
+          "thresholdCritical": 85,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    },
+    {
+      "id": 31,
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 45 },
+      "type": "guilhermeladislau-zabbixmonitor-panel",
+      "title": "Cluster Kubernetes • Comparativo de vCPU (4 VMs)",
+      "datasource": {
+        "type": "testdata",
+        "uid": "grafana-testdata"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "A",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "40, 48, 56, 62",
+          "alias": "K8S-MASTER-01: Uso de vCPU da VM (%)",
+          "labels": "host=K8S-MASTER-01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "B",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "65, 72, 79, 86",
+          "alias": "K8S-WORKER-01: Uso de vCPU da VM (%)",
+          "labels": "host=K8S-WORKER-01"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "C",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "52, 60, 68, 74",
+          "alias": "K8S-WORKER-02: Uso de vCPU da VM (%)",
+          "labels": "host=K8S-WORKER-02"
+        },
+        {
+          "datasource": {
+            "type": "testdata",
+            "uid": "grafana-testdata"
+          },
+          "refId": "D",
+          "scenarioId": "csv_metric_values",
+          "stringInput": "30, 36, 42, 48",
+          "alias": "K8S-INGRESS-01: Uso de vCPU da VM (%)",
+          "labels": "host=K8S-INGRESS-01"
+        }
+      ],
+      "options": {
+        "deviceType": "vm",
+        "cardDisplayMode": "individual",
+        "vmMetric": "vm_cpu_uso",
+        "multiDevices": {
+          "enabled": true,
+          "count": 4
+        },
+        "overrideCardTitleWithPreset": true,
+        "estilizacaoVisual": {
+          "chartType": "barra",
+          "sparklineColor": "",
+          "showProgressBar": true,
+          "showSparkline": true,
+          "thresholdMode": "normal",
+          "thresholdWarning": 75,
+          "thresholdCritical": 90,
+          "colorOk": "#22c55e",
+          "colorWarning": "#f59e0b",
+          "colorCritical": "#ef4444",
+          "fixedMetricColor": "",
+          "backgroundColor": "",
+          "cardBackgroundColor": "",
+          "textColor": "",
+          "borderColor": "",
+          "blockSize": "md",
+          "blockHeight": 0,
+          "columns": "auto",
+          "showStatusBadge": true,
+          "fontFamily": "default",
+          "fontSize": "md"
+        }
+      }
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "grafana",
+    "monitoramento",
+    "ti",
+    "zabbix",
+    "testdata",
+    "infraestrutura"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": "grafana-testdata",
+          "value": "grafana-testdata"
+        },
+        "hide": 0,
+        "includeAll": false,
+        "label": "Data Source",
+        "multi": false,
+        "name": "datasource",
+        "options": [],
+        "query": "testdata",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": [
+      "5s",
+      "10s",
+      "30s",
+      "1m",
+      "5m"
+    ]
+  },
+  "timezone": "browser",
+  "title": "Monitoramento de Infraestrutura de TI (Demonstração TestData)",
+  "uid": "zabbix-infra-testdata",
+  "version": 1,
+  "weekStart": ""
+}

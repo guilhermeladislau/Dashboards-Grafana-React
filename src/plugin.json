@@ -1,0 +1,31 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/main/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "panel",
+  "name": "Zabbix Infra Monitor Panel",
+  "id": "guilhermeladislau-zabbixmonitor-panel",
+  "info": {
+    "keywords": ["panel", "zabbix", "monitoring", "infrastructure", "react"],
+    "description": "Painel modular para monitoramento de infraestrutura de TI com dados do Zabbix",
+    "author": {
+      "name": "Guilherme Ladislau",
+      "url": "https://github.com/guilhermeladislau"
+    },
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "GitHub",
+        "url": "https://github.com/guilhermeladislau/Dashboards-Grafana-React"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=13.2.0",
+    "plugins": []
+  }
+}
