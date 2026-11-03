@@ -1,3 +1,4 @@
+import { DataFrame } from '@grafana/data';
 import {
   AnyDeviceMetricType,
   ChartType,
@@ -6,6 +7,7 @@ import {
   PanelOptions,
   StandardUnitType,
 } from '../types';
+import { identificarSeries } from './identificacaoSeries';
 
 export interface PreconfiguracaoMetricaDispositivo {
   rotulo: string;
@@ -1083,46 +1085,18 @@ export function obterDispositivoAtivo(opcoes?: Partial<PanelOptions>): DeviceTyp
 }
 
 /**
- * Retorna a métrica específica selecionada para o dispositivo ativo
+ * Retorna a métrica única "forçada" para o dispositivo ativo.
+ *
+ * Os antigos seletores "O que Monitorar no ..." (firewallMetric, vmMetric, etc.) foram
+ * removidos do editor: a escolha das métricas agora é feita somente em
+ * "Quais Métricas Monitorar" (selectedMetrics) ou pela detecção automática da query.
+ * Por isso os valores legados salvos em dashboards antigos são ignorados aqui,
+ * evitando uma configuração oculta que o usuário não consegue mais alterar.
  */
 export function obterMetricaDispositivoAtiva(
-  opcoes?: Partial<PanelOptions>
+  _opcoes?: Partial<PanelOptions>
 ): AnyDeviceMetricType | null {
-  const dispositivo = obterDispositivoAtivo(opcoes);
-
-  switch (dispositivo) {
-    case 'firewall': {
-      const m = opcoes?.firewallMetric || opcoes?.firewallMetricType || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'vm': {
-      const m = opcoes?.vmMetric || opcoes?.vmwareMetricType || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'proxy': {
-      const m = opcoes?.proxyMetric || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'host': {
-      const m = opcoes?.hostMetric || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'servidor': {
-      const m = opcoes?.servidorMetric || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'access_point': {
-      const m = opcoes?.accessPointMetric || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'porta_rede': {
-      const m = opcoes?.portaRedeMetric || 'auto_device';
-      return m === 'auto_device' ? null : m;
-    }
-    case 'auto':
-    default:
-      return null;
-  }
+  return null;
 }
 
 export interface OpcaoMetricaDispositivo {
@@ -1237,8 +1211,9 @@ export function obterMetricasDisponiveisParaDispositivo(
 }
 
 /**
- * Verifica se o painel está configurado em modo de múltiplas métricas
- * (quando "Várias Métricas no Mesmo Card" está ativo ou quando o seletor do dispositivo está em "auto_device")
+ * Verifica se o painel está configurado em modo de múltiplas métricas.
+ * Como a métrica única legada foi descontinuada, o painel sempre trabalha
+ * com a seleção de métricas (ou detecção automática da query).
  */
 export function estaEmModoMultiplasMetricas(opcoes?: Partial<PanelOptions>): boolean {
   if (!opcoes) {
@@ -1258,7 +1233,7 @@ export function estaEmModoMultiplasMetricas(opcoes?: Partial<PanelOptions>): boo
 const PALAVRAS_CHAVE_POR_METRICA: Record<string, { incluir: string[]; excluir?: string[] }> = {
   // Firewall
   fw_status: { incluir: ['ping', 'status', 'icmp', 'online', 'state', 'disponibilidade'], excluir: ['vpn', 'tunnel'] },
-  fw_cpu: { incluir: ['cpu', 'processor', 'processador'] },
+  fw_cpu: { incluir: ['cpu', 'processor', 'processador'], excluir: ['core', 'cores', 'núcleo', 'nucleo', 'núcleos', 'nucleos', 'count', 'number', 'número', 'numero', 'quantidade', 'qtd', 'temp', 'frequência', 'frequencia', 'frequency', 'mhz', 'ghz'] },
   fw_memoria: { incluir: ['mem', 'ram', 'memory', 'memória'] },
   fw_sessoes: { incluir: ['session', 'sessões', 'sessoes', 'concurr', 'conexões', 'connections'] },
   fw_trafego_wan_in: { incluir: ['wan in', 'download', 'rx', 'received', 'entrada', 'in ', 'inbound'] },
@@ -1269,7 +1244,7 @@ const PALAVRAS_CHAVE_POR_METRICA: Record<string, { incluir: string[]; excluir?: 
 
   // VM
   vm_estado: { incluir: ['power', 'state', 'estado', 'status', 'ping', 'ligada'] },
-  vm_cpu_uso: { incluir: ['cpu', 'vcpu', 'processor'], excluir: ['ready'] },
+  vm_cpu_uso: { incluir: ['cpu', 'vcpu', 'processor'], excluir: ['ready', 'core', 'cores', 'núcleo', 'nucleo', 'núcleos', 'nucleos', 'count', 'number', 'número', 'numero', 'quantidade', 'qtd', 'temp', 'frequência', 'frequencia', 'frequency', 'mhz', 'ghz'] },
   vm_cpu_ready: { incluir: ['ready', 'contenç', 'contention'] },
   vm_memoria_uso: { incluir: ['mem', 'ram', 'memory', 'memória'] },
   vm_disco_usado: { incluir: ['disk', 'disco', 'partição', 'partition', 'storage', 'vfs.fs'], excluir: ['free', 'livre', 'iops'] },
@@ -1286,14 +1261,14 @@ const PALAVRAS_CHAVE_POR_METRICA: Record<string, { incluir: string[]; excluir?: 
   proxy_latencia: { incluir: ['latenc', 'latênc', 'response time', 'tempo de resposta', 'duration'] },
   proxy_conexoes_ativas: { incluir: ['conn', 'conex', 'client', 'clientes', 'active'] },
   proxy_banda: { incluir: ['band', 'traffic', 'tráfego', 'bps', 'bytes', 'in', 'out'] },
-  proxy_cpu: { incluir: ['cpu', 'processor'] },
+  proxy_cpu: { incluir: ['cpu', 'processor'], excluir: ['core', 'cores', 'núcleo', 'nucleo', 'núcleos', 'nucleos', 'count', 'number', 'número', 'numero', 'quantidade', 'qtd', 'temp', 'frequência', 'frequencia', 'frequency', 'mhz', 'ghz'] },
   proxy_memoria: { incluir: ['mem', 'ram', 'memory'] },
   proxy_erros_http: { incluir: ['err', '5xx', '4xx', 'fail', 'falha'] },
 
   // Host
   host_status: { incluir: ['status', 'ping', 'icmp', 'online', 'connection'] },
   host_saude: { incluir: ['health', 'saúde', 'saude', 'overall', 'sensor', 'raid'] },
-  host_cpu_uso: { incluir: ['cpu', 'processor', 'processador'] },
+  host_cpu_uso: { incluir: ['cpu', 'processor', 'processador'], excluir: ['core', 'cores', 'núcleo', 'nucleo', 'núcleos', 'nucleos', 'count', 'number', 'número', 'numero', 'quantidade', 'qtd', 'temp', 'frequência', 'frequencia', 'frequency', 'mhz', 'ghz'] },
   host_memoria_uso: { incluir: ['mem', 'ram', 'memory', 'memória'] },
   host_datastore_uso: { incluir: ['datastore', 'storage', 'disk', 'disco'], excluir: ['free', 'livre'] },
   host_datastore_livre: { incluir: ['free', 'livre', 'available'] },
@@ -1305,7 +1280,7 @@ const PALAVRAS_CHAVE_POR_METRICA: Record<string, { incluir: string[]; excluir?: 
   // Servidor
   srv_status_ping: { incluir: ['ping', 'icmp', 'conectividade'], excluir: ['latency', 'latência', 'loss'] },
   srv_status_agent: { incluir: ['agent', 'zabbix'] },
-  srv_cpu_uso: { incluir: ['cpu', 'processor', 'processador'], excluir: ['queue', 'fila'] },
+  srv_cpu_uso: { incluir: ['cpu', 'processor', 'processador'], excluir: ['queue', 'fila', 'load', 'core', 'cores', 'núcleo', 'nucleo', 'núcleos', 'nucleos', 'count', 'number', 'número', 'numero', 'quantidade', 'qtd', 'temp', 'frequência', 'frequencia', 'frequency', 'mhz', 'ghz'] },
   srv_cpu_fila: { incluir: ['queue', 'fila', 'load'] },
   srv_memoria_uso: { incluir: ['mem', 'ram', 'memory', 'memória'], excluir: ['free', 'livre', 'available', 'disponível'] },
   srv_memoria_livre: { incluir: ['mem free', 'ram free', 'available memory', 'memória livre', 'memoria livre', 'ram disponível'] },
@@ -1324,7 +1299,7 @@ const PALAVRAS_CHAVE_POR_METRICA: Record<string, { incluir: string[]; excluir?: 
   ap_interferencia: { incluir: ['interfer', 'channel', 'canal', 'noise', 'ruído', 'ocupação', 'utilization'] },
   ap_trafego_in: { incluir: ['download', 'rx', 'received', 'in', 'entrada'] },
   ap_trafego_out: { incluir: ['upload', 'tx', 'sent', 'out', 'saída'] },
-  ap_cpu: { incluir: ['cpu', 'processor'] },
+  ap_cpu: { incluir: ['cpu', 'processor'], excluir: ['core', 'cores', 'núcleo', 'nucleo', 'núcleos', 'nucleos', 'count', 'number', 'número', 'numero', 'quantidade', 'qtd', 'temp', 'frequência', 'frequencia', 'frequency', 'mhz', 'ghz'] },
   ap_uptime: { incluir: ['uptime', 'atividade'] },
 
   // Porta de Rede
@@ -1368,4 +1343,56 @@ export function detectarSubTipoMetricaPorTexto(
   }
 
   return null;
+}
+
+/**
+ * Métrica detectada nas séries retornadas pela query.
+ * - `chave`: subtipo pré-configurado (quando reconhecido) ou o nome real da métrica.
+ *   É a mesma chave usada pelo processador de dados para buscar o estilo individual.
+ */
+export interface MetricaDetectadaQuery {
+  chave: string;
+  rotulo: string;
+  icone: string;
+  subtipo: AnyDeviceMetricType | null;
+}
+
+/**
+ * Detecta quais métricas estão presentes nas séries da query (sem duplicatas).
+ * Métricas reconhecidas no catálogo do dispositivo usam a chave do subtipo;
+ * as demais (ex.: "Número de núcleos") entram com o próprio nome como chave.
+ */
+export function detectarMetricasDaQuery(
+  series: DataFrame[] | undefined,
+  dispositivo: DeviceType
+): MetricaDetectadaQuery[] {
+  if (!series || series.length === 0) {
+    return [];
+  }
+
+  const catalogo = obterMetricasDisponiveisParaDispositivo(dispositivo);
+  const resultado = new Map<string, MetricaDetectadaQuery>();
+
+  for (const id of identificarSeries(series)) {
+    const subtipo = detectarSubTipoMetricaPorTexto(id.nomeMetrica, dispositivo);
+    if (subtipo) {
+      if (!resultado.has(subtipo)) {
+        const itemCatalogo = catalogo.find((m) => m.value === subtipo);
+        resultado.set(subtipo, {
+          chave: subtipo,
+          rotulo: itemCatalogo?.label || PRECONFIGURACOES_METRICAS[subtipo]?.rotulo || id.nomeMetrica,
+          icone: itemCatalogo?.icone || PRECONFIGURACOES_METRICAS[subtipo]?.icone || '📊',
+          subtipo,
+        });
+      }
+      continue;
+    }
+
+    const chave = id.nomeMetrica;
+    if (!resultado.has(chave)) {
+      resultado.set(chave, { chave, rotulo: id.nomeMetrica, icone: '📊', subtipo: null });
+    }
+  }
+
+  return Array.from(resultado.values());
 }

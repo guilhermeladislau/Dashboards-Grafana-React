@@ -3,6 +3,7 @@ import { StandardEditorProps } from '@grafana/data';
 import { Button, Checkbox, useTheme2 } from '@grafana/ui';
 import { AnyDeviceMetricType, PanelOptions } from '../../types';
 import {
+  detectarMetricasDaQuery,
   METADADOS_DISPOSITIVOS,
   obterDispositivoAtivo,
   obterMetricasDisponiveisParaDispositivo,
@@ -17,6 +18,9 @@ export const EditorSelecaoMetricas: React.FC<
   const dispositivoAtivo = obterDispositivoAtivo(opcoes);
   const metaDispositivo = METADADOS_DISPOSITIVOS[dispositivoAtivo];
   const metricasDisponiveis = obterMetricasDisponiveisParaDispositivo(dispositivoAtivo);
+  const chavesDetectadasNaQuery = new Set(
+    detectarMetricasDaQuery(context?.data, dispositivoAtivo).map((m) => m.chave)
+  );
 
   const selecionadas: AnyDeviceMetricType[] = Array.isArray(value)
     ? value.filter((m) => m !== 'auto_device')
@@ -41,7 +45,7 @@ export const EditorSelecaoMetricas: React.FC<
     onChange(essenciais.length > 0 ? essenciais : metricasDisponiveis.slice(0, 4).map((m) => m.value));
   };
 
-  const limparSelecao = () => {
+  const deselecionarTudo = () => {
     onChange([]);
   };
 
@@ -127,17 +131,16 @@ export const EditorSelecaoMetricas: React.FC<
         >
           ✅ Todas ({metricasDisponiveis.length})
         </Button>
-        {selecionadas.length > 0 && (
-          <Button
-            size="sm"
-            variant="destructive"
-            fill="text"
-            onClick={limparSelecao}
-            title="Limpa o filtro manual e detecta todas as séries da query automaticamente"
-          >
-            Limpar (Auto)
-          </Button>
-        )}
+        <Button
+          size="sm"
+          variant="destructive"
+          fill="outline"
+          onClick={deselecionarTudo}
+          disabled={selecionadas.length === 0}
+          title="Desmarca todas as métricas (volta ao modo automático: exibe as métricas detectadas na query)"
+        >
+          ❌ Deselecionar tudo
+        </Button>
       </div>
 
       {/* Lista de checkboxes das métricas */}
@@ -212,6 +215,21 @@ export const EditorSelecaoMetricas: React.FC<
                 </span>
               </div>
 
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
+              {chavesDetectadasNaQuery.has(item.value) && (
+                <span
+                  title="Métrica encontrada nas séries retornadas pela query"
+                  style={{
+                    fontSize: 10,
+                    color: tema.colors.success.text,
+                    border: `1px solid ${tema.colors.success.border}`,
+                    padding: '0 5px',
+                    borderRadius: 4,
+                  }}
+                >
+                  na query
+                </span>
+              )}
               {preconfig && (
                 <span
                   style={{
@@ -227,6 +245,7 @@ export const EditorSelecaoMetricas: React.FC<
                   {preconfig.graficoPadrao}
                 </span>
               )}
+              </div>
             </div>
           );
         })}

@@ -50,11 +50,10 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
     new Set(items.map((i) => i.metricName || i.title).filter(Boolean))
   );
 
-  const temMultiplosDispositivos =
-    nomesDispositivosUnicos.length > 1 ||
-    (nomesDispositivosUnicos.length === 1 &&
-      items.length > 1 &&
-      metricasUnicas.length === 1);
+  // Só existem "múltiplos dispositivos" quando há mais de um NOME de dispositivo distinto.
+  // Várias métricas de um mesmo dispositivo (ex.: "Uso de CPU" e "Número de núcleos" do
+  // dispositivo "CPU") continuam sendo um único dispositivo com N métricas.
+  const temMultiplosDispositivos = nomesDispositivosUnicos.length > 1;
 
   const ehMesmaMetricaMultiplosDispositivos =
     temMultiplosDispositivos && metricasUnicas.length === 1;
@@ -85,7 +84,7 @@ export const BlocoConsolidadoDispositivo: React.FC<BlocoConsolidadoDispositivoPr
   const subtituloPrincipalCard =
     subtituloCabecalhoCustomizado ||
     (temMultiplosDispositivos
-      ? `${nomesDispositivosUnicos.length || items.length} dispositivo(s) monitorado(s) • ${qtdOk} normal${
+      ? `${nomesDispositivosUnicos.length} dispositivo(s) monitorado(s) • ${qtdOk} normal${
           qtdAtencao > 0 ? ` • ${qtdAtencao} atenção` : ''
         }${qtdCritico > 0 ? ` • ${qtdCritico} crítico` : ''}`
       : totalOriginal && totalOriginal > items.length

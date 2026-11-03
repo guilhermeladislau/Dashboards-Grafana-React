@@ -10,6 +10,7 @@ import {
   ThresholdMode,
 } from '../../types';
 import {
+  detectarMetricasDaQuery,
   obterDispositivoAtivo,
   obterMetricasDisponiveisParaDispositivo,
   PRECONFIGURACOES_METRICAS,
@@ -58,11 +59,18 @@ export const EditorEstilizacaoMetricas: React.FC<
     : [];
 
   // Se o usuário selecionou métricas específicas, exibe apenas elas para estilizar;
-  // caso contrário, exibe todas as métricas do catálogo do dispositivo ativo.
-  const metricasParaEstilizar =
-    selecionadas.length > 0
-      ? catalogoDispositivo.filter((m) => selecionadas.includes(m.value))
-      : catalogoDispositivo;
+  // caso contrário (modo Automático), exibe somente as métricas DETECTADAS na query.
+  const modoAutomatico = selecionadas.length === 0;
+  const metricasParaEstilizar: Array<{ value: string; label: string; icone: string }> =
+    modoAutomatico
+      ? detectarMetricasDaQuery(context?.data, dispositivoAtivo).map((m) => ({
+          value: m.chave,
+          label: m.rotulo,
+          icone: m.icone,
+        }))
+      : catalogoDispositivo
+          .filter((m) => selecionadas.includes(m.value))
+          .map((m) => ({ value: m.value as string, label: m.label, icone: m.icone }));
 
   const mapaEstilos: Record<string, MetricStyleOverride> = value || {};
 
@@ -128,7 +136,13 @@ export const EditorEstilizacaoMetricas: React.FC<
           lineHeight: 1.35,
         }}
       >
-        Clique em uma métrica abaixo para personalizar seu gráfico, cores, limiares, unidade e título individualmente:
+        {metricasParaEstilizar.length === 0
+          ? modoAutomatico
+            ? 'Nenhuma métrica detectada na query ainda. Configure a query (ou selecione métricas em "Quais Métricas Monitorar") para estilizá-las individualmente.'
+            : 'Nenhuma métrica selecionada.'
+          : modoAutomatico
+          ? `Modo automático: ${metricasParaEstilizar.length} métrica(s) detectada(s) na query. Clique em uma para personalizar gráfico, cores, limiares, unidade e título:`
+          : 'Clique em uma métrica abaixo para personalizar seu gráfico, cores, limiares, unidade e título individualmente:'}
       </div>
 
       {metricasParaEstilizar.map((m) => {
@@ -152,7 +166,11 @@ export const EditorEstilizacaoMetricas: React.FC<
           <GavetaRetratil
             key={chave}
             titulo={`${m.icone} ${est.displayName || m.label}${customizado ? ' • ✨ Customizado' : ''}`}
-            subtitulo={`Padrão: Gráfico ${preconfig?.graficoPadrao || 'barra'} | Limiares ${preconfig?.limiarAtencao ?? 70}/${preconfig?.limiarCritico ?? 85}`}
+            subtitulo={
+              preconfig
+                ? `Padrão: Gráfico ${preconfig.graficoPadrao} | Limiares ${preconfig.limiarAtencao}/${preconfig.limiarCritico}`
+                : 'Métrica detectada na query (sem pré-configuração)'
+            }
             abertaInicial={false}
           >
             {/* 1. Nome de Exibição e Filtro de Série */}

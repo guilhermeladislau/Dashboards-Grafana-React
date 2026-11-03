@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FieldType, getFieldDisplayName, SelectableValue, StandardEditorProps } from '@grafana/data';
+import { SelectableValue, StandardEditorProps } from '@grafana/data';
 import {
   Button,
   Checkbox,
@@ -25,6 +25,7 @@ import {
   obterDispositivoAtivo,
   obterMetricasDisponiveisParaDispositivo,
 } from '../../utilitarios/preconfiguracoesDispositivos';
+import { extrairDispositivosDasSeries } from '../../utilitarios/identificacaoSeries';
 import { OPCOES_VARIACOES_GRAFICOS } from './EditorEstilizacaoVisual';
 import { ControleCorComReset } from './ControleCorComReset';
 
@@ -43,55 +44,16 @@ const OPCOES_AGRUPAMENTO_CONSOLIDADO: Array<SelectableValue<ConsolidatedGroupMod
   },
 ];
 
+/**
+ * Extrai apenas os DISPOSITIVOS reais da query (labels de host ou prefixo de host),
+ * sem listar nomes de métricas como se fossem dispositivos.
+ */
 function extrairNomesDispositivosDaQuery(context: StandardEditorProps['context']): string[] {
   const series = context?.data;
   if (!series || !Array.isArray(series) || series.length === 0) {
     return [];
   }
-
-  const nomes = new Set<string>();
-  for (const s of series) {
-    const camposValor = s.fields?.filter(
-      (f: any) => f.type === FieldType.number || f.type === FieldType.string
-    );
-    if (!camposValor || camposValor.length === 0) {
-      if (s.name) {
-        nomes.add(s.name.split(':')[0].trim());
-      }
-      continue;
-    }
-
-    for (const campo of camposValor) {
-      const hostLabel =
-        campo.labels?.host ||
-        campo.labels?.hostname ||
-        campo.labels?.device ||
-        campo.labels?.instance ||
-        campo.labels?.server;
-      if (hostLabel) {
-        nomes.add(String(hostLabel).trim());
-        continue;
-      }
-
-      const bruto =
-        campo.config?.displayName ||
-        getFieldDisplayName(campo, s, series) ||
-        s.name ||
-        campo.name;
-      if (bruto) {
-        const str = String(bruto);
-        if (str.includes(':')) {
-          nomes.add(str.split(':')[0].trim());
-        } else if (str.includes(' - ')) {
-          nomes.add(str.split(' - ')[0].trim());
-        } else {
-          nomes.add(str.trim());
-        }
-      }
-    }
-  }
-
-  return Array.from(nomes).filter(Boolean);
+  return extrairDispositivosDasSeries(series);
 }
 
 export const EditorDispositivosCard: React.FC<
@@ -272,7 +234,9 @@ export const EditorDispositivosCard: React.FC<
         >
           {devices.length > 0
             ? `${ativosCount} de ${devices.length} ativo(s)`
-            : `✨ Auto (${detectadosNaQuery.length} na query)`}
+            : detectadosNaQuery.length > 1
+            ? `✨ Auto (${detectadosNaQuery.length} dispositivos na query)`
+            : '✨ Auto (dispositivo único)'}
         </span>
       </div>
 

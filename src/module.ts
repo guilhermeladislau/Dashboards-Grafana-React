@@ -8,7 +8,6 @@ import {
   EditorEstilizacaoMetricas,
   EditorDispositivosCard,
 } from './components';
-import { estaEmModoMultiplasMetricas } from './utilitarios/preconfiguracoesDispositivos';
 
 export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
   .setPanelOptions((builder) => {
@@ -43,232 +42,41 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           path: 'cardDisplayMode',
           name: 'Modo de Exibição do Card',
           description:
-            'Escolha entre exibir um card individual por métrica ou agrupar várias métricas dentro de um único card do dispositivo',
+            'Cada dispositivo agrupa suas respectivas métricas (ex.: Dispositivo CPU com Uso de CPU e Número de núcleos). Escolha como organizar os cards no painel',
           defaultValue: 'individual',
           settings: {
             options: [
-              { value: 'individual', label: '1 Métrica por Card (Grade)' },
-              { value: 'consolidado', label: 'Várias Métricas no Mesmo Card' },
+              { value: 'individual', label: '1 Card por Dispositivo (Métricas no Card)' },
+              { value: 'consolidado', label: 'Agrupar Todos em 1 Único Card' },
+              { value: 'metricas_separadas', label: '1 Card por Métrica (Isoladas)' },
             ],
           },
         })
 
-        .addSelect({
+        .addTextInput({
           category: ['Dispositivo e Monitoramento'],
           path: 'maxDevices',
           name: 'Quantidade de Dispositivos / Métricas Monitoradas',
           description:
-            'Limite de dispositivos ou métricas exibidas no card/painel (selecione "Todos" para ilimitado)',
-          defaultValue: 0,
+            'Quantidade máxima exibida no painel. Com vários dispositivos, limita os dispositivos; com um único dispositivo, limita as métricas. Vazio ou 0 = sem limite',
+          defaultValue: '',
           settings: {
-            options: [
-              { value: 0, label: '✨ Todos os Dispositivos (Sem Limite)' },
-              { value: 1, label: '1 Dispositivo' },
-              { value: 2, label: '2 Dispositivos' },
-              { value: 3, label: '3 Dispositivos' },
-              { value: 4, label: '4 Dispositivos' },
-              { value: 5, label: '5 Dispositivos' },
-              { value: 6, label: '6 Dispositivos' },
-              { value: 8, label: '8 Dispositivos' },
-              { value: 10, label: '10 Dispositivos' },
-              { value: 12, label: '12 Dispositivos' },
-              { value: 16, label: '16 Dispositivos' },
-              { value: 20, label: '20 Dispositivos' },
-              { value: 30, label: '30 Dispositivos' },
-              { value: 50, label: '50 Dispositivos' },
-            ],
+            placeholder: 'Ex.: 5 (vazio ou 0 = todos)',
           },
         })
 
         // =====================================================================
-        // 2. O QUE MONITORAR POR DISPOSITIVO (MÉTRICAS PRÉ-CONFIGURADAS)
-        // =====================================================================
-
-        // 2.1 Firewall
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'firewallMetric',
-          name: 'O que Monitorar no Firewall',
-          description: 'Métrica pré-configurada com unidade, ícone, gráfico e limiares ideais',
-          defaultValue: 'fw_cpu',
-          showIf: (config) => config.deviceType === 'firewall',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'fw_status', label: '🛡️ Status do Firewall (Online / Offline)' },
-              { value: 'fw_cpu', label: '📈 Uso de CPU do Firewall (%)' },
-              { value: 'fw_memoria', label: '🧠 Uso de Memória do Firewall (%)' },
-              { value: 'fw_sessoes', label: '👥 Sessões Concorrentes Ativas' },
-              { value: 'fw_trafego_wan_in', label: '⬇️ Tráfego WAN Download / Entrada (bps)' },
-              { value: 'fw_trafego_wan_out', label: '⬆️ Tráfego WAN Upload / Saída (bps)' },
-              { value: 'fw_vpn_status', label: '🔒 Status de Túneis VPN (IPsec / SSL)' },
-              { value: 'fw_ameacas_bloqueadas', label: '🚨 Ameaças / Ataques Bloqueados (IPS)' },
-              { value: 'fw_uptime', label: '⏱️ Tempo de Atividade (Uptime)' },
-            ],
-          },
-        })
-
-        // 2.2 Máquina Virtual (VM)
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'vmMetric',
-          name: 'O que Monitorar na VM',
-          description: 'Métrica pré-configurada para Máquinas Virtuais',
-          defaultValue: 'vm_cpu_uso',
-          showIf: (config) => config.deviceType === 'vm',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'vm_estado', label: '📦 Estado da VM (Ligada / Desligada)' },
-              { value: 'vm_cpu_uso', label: '📈 Uso de vCPU da VM (%)' },
-              { value: 'vm_cpu_ready', label: '⚡ CPU Ready / Contenção (%)' },
-              { value: 'vm_memoria_uso', label: '🧠 Uso de Memória RAM da VM (%)' },
-              { value: 'vm_disco_usado', label: '💿 Espaço em Disco Usado (%)' },
-              { value: 'vm_disco_livre', label: '💾 Espaço em Disco Livre (GB / TB)' },
-              { value: 'vm_iops', label: '🔄 IOPS de Disco Virtual' },
-              { value: 'vm_snapshots', label: '📸 Snapshots Ativos na VM' },
-              { value: 'vm_rede', label: '🌐 Tráfego de Rede vNIC (bps)' },
-              { value: 'vm_uptime', label: '⏱️ Uptime da VM' },
-            ],
-          },
-        })
-
-        // 2.3 Proxy
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'proxyMetric',
-          name: 'O que Monitorar no Proxy',
-          description: 'Métrica pré-configurada para Servidores Proxy e Balanceadores',
-          defaultValue: 'proxy_requisicoes_seg',
-          showIf: (config) => config.deviceType === 'proxy',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'proxy_status', label: '🌐 Status do Serviço Proxy (Online / Offline)' },
-              { value: 'proxy_requisicoes_seg', label: '⚡ Requisições por Segundo (req/s)' },
-              { value: 'proxy_cache_hit', label: '🎯 Taxa de Cache Hit (%)' },
-              { value: 'proxy_latencia', label: '⏱️ Latência / Tempo de Resposta HTTP (ms)' },
-              { value: 'proxy_conexoes_ativas', label: '👥 Conexões / Clientes Ativos' },
-              { value: 'proxy_banda', label: '📶 Consumo de Banda do Proxy (bps)' },
-              { value: 'proxy_cpu', label: '📈 Uso de CPU do Proxy (%)' },
-              { value: 'proxy_memoria', label: '🧠 Uso de Memória do Proxy (%)' },
-              { value: 'proxy_erros_http', label: '⚠️ Erros HTTP (4xx / 5xx)' },
-            ],
-          },
-        })
-
-        // 2.4 Host / Hipervisor
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'hostMetric',
-          name: 'O que Monitorar no Host',
-          description: 'Métrica pré-configurada para Hosts Físicos e Hipervisores',
-          defaultValue: 'host_cpu_uso',
-          showIf: (config) => config.deviceType === 'host',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'host_status', label: '🖧 Status do Host / Hipervisor (Online / Offline)' },
-              { value: 'host_saude', label: '🩺 Saúde Geral do Hardware (Health State)' },
-              { value: 'host_cpu_uso', label: '📈 Uso de CPU Física (%)' },
-              { value: 'host_memoria_uso', label: '🧠 Uso de Memória Física (%)' },
-              { value: 'host_datastore_uso', label: '💿 Uso de Datastore / Storage (%)' },
-              { value: 'host_datastore_livre', label: '💾 Espaço Livre no Datastore (GB / TB)' },
-              { value: 'host_vms_ativas', label: '📦 Total de VMs Hospedadas no Host' },
-              { value: 'host_temperatura', label: '🌡️ Temperatura do Hardware (°C)' },
-              { value: 'host_energia', label: '⚡ Consumo Elétrico (Watts)' },
-              { value: 'host_uptime', label: '⏱️ Uptime do Host' },
-            ],
-          },
-        })
-
-        // 2.5 Servidores (Windows / Linux)
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'servidorMetric',
-          name: 'O que Monitorar no Servidor',
-          description: 'Métrica pré-configurada para Servidores Windows e Linux',
-          defaultValue: 'srv_cpu_uso',
-          showIf: (config) => config.deviceType === 'servidor',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'srv_status_ping', label: '🌐 Conectividade ICMP Ping (Online / Offline)' },
-              { value: 'srv_status_agent', label: '🛡️ Status do Zabbix Agent (Online / Offline)' },
-              { value: 'srv_cpu_uso', label: '📈 Uso de CPU do Servidor (%)' },
-              { value: 'srv_cpu_fila', label: '📊 Fila de Processador (CPU Queue)' },
-              { value: 'srv_memoria_uso', label: '🧠 Uso de Memória RAM (%)' },
-              { value: 'srv_memoria_livre', label: '🧠 Memória RAM Livre (GB)' },
-              { value: 'srv_disco_uso', label: '💿 Uso de Disco / Partição (%)' },
-              { value: 'srv_disco_livre', label: '💾 Espaço Livre em Disco (GB / TB)' },
-              { value: 'srv_disco_latencia', label: '⏱️ Latência de Disco (ms)' },
-              { value: 'srv_rede_trafego', label: '⚡ Tráfego de Rede do Servidor (bps)' },
-              { value: 'srv_servicos_parados', label: '🚨 Serviços Parados / Incidentes' },
-              { value: 'srv_uptime', label: '⏱️ Uptime do Servidor' },
-            ],
-          },
-        })
-
-        // 2.6 Access Points (Wi-Fi)
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'accessPointMetric',
-          name: 'O que Monitorar no Access Point',
-          description: 'Métrica pré-configurada para Pontos de Acesso Wi-Fi',
-          defaultValue: 'ap_clientes',
-          showIf: (config) => config.deviceType === 'access_point',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'ap_status', label: '📡 Status do Access Point (Online / Offline)' },
-              { value: 'ap_clientes', label: '📱 Clientes Wi-Fi Conectados' },
-              { value: 'ap_sinal_qualidade', label: '📶 Qualidade do Sinal Wi-Fi (%)' },
-              { value: 'ap_sinal_dbm', label: '📡 Potência de Sinal / RSSI (dBm)' },
-              { value: 'ap_interferencia', label: '🌊 Ocupação do Canal / Interferência (%)' },
-              { value: 'ap_trafego_in', label: '⬇️ Tráfego Wi-Fi Download (bps)' },
-              { value: 'ap_trafego_out', label: '⬆️ Tráfego Wi-Fi Upload (bps)' },
-              { value: 'ap_cpu', label: '📈 Uso de CPU do Access Point (%)' },
-              { value: 'ap_uptime', label: '⏱️ Uptime do Access Point' },
-            ],
-          },
-        })
-
-        // 2.7 Portas de Rede / Switch
-        .addSelect({
-          category: ['Dispositivo e Monitoramento'],
-          path: 'portaRedeMetric',
-          name: 'O que Monitorar na Porta de Rede',
-          description: 'Métrica pré-configurada para Portas de Switch e Interfaces de Roteador',
-          defaultValue: 'porta_trafego_in',
-          showIf: (config) => config.deviceType === 'porta_rede',
-          settings: {
-            options: [
-              { value: 'auto_device', label: '✨ Detectar Automaticamente (Múltiplas Métricas)' },
-              { value: 'porta_status', label: '🔌 Status da Porta (UP / DOWN)' },
-              { value: 'porta_trafego_in', label: '⬇️ Tráfego de Entrada / RX (bps)' },
-              { value: 'porta_trafego_out', label: '⬆️ Tráfego de Saída / TX (bps)' },
-              { value: 'porta_utilizacao_pct', label: '📊 Utilização da Banda da Porta (%)' },
-              { value: 'porta_pacotes_seg', label: '📦 Fluxo de Pacotes por Segundo (pps)' },
-              { value: 'porta_erros', label: '⚠️ Erros CRC / Descartes na Porta' },
-              { value: 'porta_velocidade', label: '⚡ Velocidade Negociada (100M / 1G / 10G)' },
-              { value: 'porta_poe_watts', label: '🔋 Consumo PoE da Porta (Watts)' },
-            ],
-          },
-        })
-
-        // =====================================================================
-        // 2.8 SELEÇÃO DE MÚLTIPLAS MÉTRICAS E ESTILIZAÇÃO INDIVIDUAL (PARALELA)
+        // 2. SELEÇÃO DAS MÉTRICAS DO DISPOSITIVO E ESTILIZAÇÃO INDIVIDUAL
         // =====================================================================
         .addCustomEditor({
           id: 'selectedMetricsEditor',
           path: 'selectedMetrics',
           name: 'Quais Métricas Monitorar',
           description:
-            'Selecione uma ou mais métricas específicas para monitorar no card (habilitado ao selecionar Várias Métricas)',
+            'Selecione as métricas do dispositivo a monitorar. Sem nenhuma seleção, o painel exibe automaticamente as métricas detectadas na query',
           category: ['Dispositivo e Monitoramento'],
           editor: EditorSelecaoMetricas,
           defaultValue: [],
-          showIf: (config) => estaEmModoMultiplasMetricas(config),
         })
 
         .addCustomEditor({
@@ -276,15 +84,14 @@ export const plugin = new PanelPlugin<PanelOptions>(PainelPrincipal)
           path: 'metricStyles',
           name: 'Estilizar Métricas Individualmente',
           description:
-            'Personalize gráfico, cores, limiares, unidade e título para cada métrica monitorada individualmente',
+            'Personalize gráfico, cores, limiares, unidade e título de cada métrica (no modo automático, lista apenas as métricas detectadas na query)',
           category: ['Dispositivo e Monitoramento'],
           editor: EditorEstilizacaoMetricas,
           defaultValue: {},
-          showIf: (config) => estaEmModoMultiplasMetricas(config),
         })
 
         // =====================================================================
-        // 2.9 MÚLTIPLOS DISPOSITIVOS NO CARD (EX: 10+ SERVIDORES EM UM ÚNICO CARD)
+        // 3. MÚLTIPLOS DISPOSITIVOS NO CARD (EX: 10+ SERVIDORES EM UM ÚNICO CARD)
         // =====================================================================
         .addCustomEditor({
           id: 'monitoredDevicesConfigEditor',

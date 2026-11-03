@@ -4,3 +4,4 @@ export * from './preconfiguracoesDispositivos';
 export * from './subtipos';
 export * from './resolucaoOpcoes';
 export * from './processadorDados';
+export * from './identificacaoSeries';

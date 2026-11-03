@@ -30,10 +30,11 @@ export type DeviceType =
 
 /**
  * Modo de Exibição dos Cards no Painel
- * - individual: Um card separado para cada métrica
- * - consolidado: Um único card do dispositivo agrupando todas as métricas
+ * - individual: 1 card por dispositivo (agrupando todas as métricas daquele dispositivo)
+ * - consolidado: Agrupa todos os dispositivos e métricas em um único card consolidado
+ * - metricas_separadas: Exibe cada métrica em um card isolado na grade
  */
-export type CardDisplayMode = 'individual' | 'consolidado';
+export type CardDisplayMode = 'individual' | 'consolidado' | 'metricas_separadas';
 
 /**
  * Modo de agrupamento quando há múltiplos dispositivos e/ou métricas no card consolidado
@@ -408,16 +409,19 @@ export interface PanelOptions {
   // 1. Seleção de Dispositivo e Modo do Card
   deviceType: DeviceType;
   cardDisplayMode: CardDisplayMode;
-  maxDevices?: number;
+  /** Limite de itens exibidos. Campo de texto no editor: vazio ou 0 = sem limite */
+  maxDevices?: number | string;
 
   // 2. Seleção do que monitorar por Dispositivo
-  firewallMetric: FirewallMetricType;
-  vmMetric: VmMetricType;
-  proxyMetric: ProxyMetricType;
-  hostMetric: HostMetricType;
-  servidorMetric: ServidorMetricType;
-  accessPointMetric: AccessPointMetricType;
-  portaRedeMetric: PortaRedeMetricType;
+  // (legado: os seletores "O que Monitorar no ..." foram removidos do editor;
+  //  mantidos opcionais apenas para ler dashboards salvos antigos)
+  firewallMetric?: FirewallMetricType;
+  vmMetric?: VmMetricType;
+  proxyMetric?: ProxyMetricType;
+  hostMetric?: HostMetricType;
+  servidorMetric?: ServidorMetricType;
+  accessPointMetric?: AccessPointMetricType;
+  portaRedeMetric?: PortaRedeMetricType;
   overrideCardTitleWithPreset: boolean;
 
   // 2.1 Seleção de Múltiplas Métricas, Estilização Individual e Múltiplos Dispositivos

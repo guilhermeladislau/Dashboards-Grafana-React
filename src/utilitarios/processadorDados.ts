@@ -1,11 +1,4 @@
-import {
-  DataFrame,
-  Field,
-  FieldType,
-  formattedValueToString,
-  getFieldDisplayName,
-  PanelData,
-} from '@grafana/data';
+import { Field, FieldType, formattedValueToString, PanelData } from '@grafana/data';
 import {
   AnyDeviceMetricType,
   ChartType,
@@ -29,7 +22,6 @@ import {
 import { avaliarLivrePercentual, avaliarUsoPercentual } from './avaliadores';
 import {
   detectarSubTipoMetricaPorTexto,
-  estaEmModoMultiplasMetricas,
   METADADOS_DISPOSITIVOS,
   obterDispositivoAtivo,
   obterSubTipoAtivo,
@@ -37,6 +29,7 @@ import {
   ROTULOS_SUBTIPOS,
 } from './subtipos';
 import { resolverOpcoesVisuais } from './resolucaoOpcoes';
+import { identificarSeries } from './identificacaoSeries';
 
 // Re-exporta helpers
 export * from './formatadores';
@@ -65,141 +58,47 @@ interface SerieExtraidaBruta {
 }
 
 /**
- * Separa de forma inteligente o nome do Host/Dispositivo e o nome da Métrica
- * a partir dos metadados da série do Zabbix/Grafana.
- */
-function extrairHostEMetricaDaSerie(
-  series: DataFrame,
-  campo: Field,
-  todasSeries: DataFrame[]
-): {
-  nomeExibicaoBruto: string;
-  hostExtraido?: string;
-  metricaExtraida: string;
-} {
-  const nomeExibicaoBruto =
-    campo.config.displayName ||
-    getFieldDisplayName(campo, series, todasSeries) ||
-    campo.name;
-
-  const hostLabel =
-    campo.labels?.host ||
-    campo.labels?.hostname ||
-    campo.labels?.device ||
-    campo.labels?.instance ||
-    campo.labels?.server ||
-    campo.labels?.['host.name'];
-
-  const itemLabel =
-    campo.labels?.item ||
-    campo.labels?.metric ||
-    campo.labels?.['item.name'];
-
-  if (hostLabel) {
-    return {
-      nomeExibicaoBruto,
-      hostExtraido: String(hostLabel).trim(),
-      metricaExtraida: itemLabel ? String(itemLabel).trim() : nomeExibicaoBruto,
-    };
-  }
-
-  // Padrão clássico do Zabbix: "NOME-DO-HOST: Nome do Item"
-  if (nomeExibicaoBruto.includes(': ')) {
-    const partes = nomeExibicaoBruto.split(': ');
-    const possivelHost = partes[0].trim();
-    const possivelMetrica = partes.slice(1).join(': ').trim();
-    if (possivelHost && possivelMetrica) {
-      return {
-        nomeExibicaoBruto,
-        hostExtraido: possivelHost,
-        metricaExtraida: possivelMetrica,
-      };
-    }
-  }
-
-  // Padrão alternativo: "NOME-DO-HOST - Nome do Item"
-  if (nomeExibicaoBruto.includes(' - ')) {
-    const partes = nomeExibicaoBruto.split(' - ');
-    const possivelHost = partes[0].trim();
-    const possivelMetrica = partes.slice(1).join(' - ').trim();
-    if (possivelHost && possivelMetrica) {
-      return {
-        nomeExibicaoBruto,
-        hostExtraido: possivelHost,
-        metricaExtraida: possivelMetrica,
-      };
-    }
-  }
-
-  // Quando series.name traz o Host e campo.name traz a Métrica
-  if (
-    series.name &&
-    campo.name &&
-    campo.name.toLowerCase() !== 'value' &&
-    series.name !== campo.name
-  ) {
-    return {
-      nomeExibicaoBruto,
-      hostExtraido: series.name.trim(),
-      metricaExtraida: campo.name.trim(),
-    };
-  }
-
-  return {
-    nomeExibicaoBruto,
-    hostExtraido: undefined,
-    metricaExtraida: nomeExibicaoBruto,
-  };
-}
-
-/**
- * Coleta todas as séries numéricas/texto dos DataFrames do Grafana
+ * Coleta todas as séries numéricas/texto dos DataFrames do Grafana.
+ * A separação entre Dispositivo e Métrica é feita analisando o CONJUNTO de séries
+ * (ver identificarSeries), para que métricas de um mesmo dispositivo
+ * (ex.: "CPU: Uso de CPU" e "CPU: Número de núcleos") não virem dispositivos diferentes.
  */
 function coletarSeriesBrutas(dados: PanelData): SerieExtraidaBruta[] {
-  const resultado: SerieExtraidaBruta[] = [];
-  for (const series of dados.series) {
+  return identificarSeries(dados.series).map((id) => {
+    const { serie: series, campo } = id;
     const campoTempo = series.fields.find((f) => f.type === FieldType.time);
-    const camposValor = series.fields.filter(
-      (f) => f.type === FieldType.number || f.type === FieldType.string
-    );
+    const unidadeCampoGrafana = campo.config.unit || '';
 
-    for (const campo of camposValor) {
-      const { nomeExibicaoBruto, hostExtraido, metricaExtraida } =
-        extrairHostEMetricaDaSerie(series, campo, dados.series);
-      const unidadeCampoGrafana = campo.config.unit || '';
+    const pontos: MetricDataPoint[] = [];
+    let ultimoValor: number | string | null = null;
 
-      const pontos: MetricDataPoint[] = [];
-      let ultimoValor: number | string | null = null;
+    const totalPontos = campo.values.length;
+    for (let i = 0; i < totalPontos; i++) {
+      const val = campo.values[i];
+      const tempo = campoTempo ? campoTempo.values[i] : undefined;
 
-      const totalPontos = campo.values.length;
-      for (let i = 0; i < totalPontos; i++) {
-        const val = campo.values[i];
-        const tempo = campoTempo ? campoTempo.values[i] : undefined;
-
-        if (val !== undefined && val !== null && val !== '') {
-          ultimoValor = val;
-        }
-
-        pontos.push({
-          time: tempo,
-          value: val ?? null,
-        });
+      if (val !== undefined && val !== null && val !== '') {
+        ultimoValor = val;
       }
 
-      resultado.push({
-        refId: series.refId || '',
-        seriesName: series.name || '',
-        campo,
-        nomeExibicaoBruto,
-        hostExtraido,
-        metricaExtraida,
-        unidadeCampoGrafana,
-        pontos,
-        ultimoValor,
+      pontos.push({
+        time: tempo,
+        value: val ?? null,
       });
     }
-  }
-  return resultado;
+
+    return {
+      refId: series.refId || '',
+      seriesName: series.name || '',
+      campo,
+      nomeExibicaoBruto: id.nomeExibicaoBruto,
+      hostExtraido: id.dispositivo,
+      metricaExtraida: id.nomeMetrica,
+      unidadeCampoGrafana,
+      pontos,
+      ultimoValor,
+    };
+  });
 }
 
 /**
@@ -230,6 +129,12 @@ function construirItemBlocoMetrica(params: {
   dispositivoItem?: MonitoredDeviceItem;
   nomeDispositivoExplicito?: string;
   multiplasMetricasAtivas: boolean;
+  /**
+   * Permite trocar o título pelo rótulo pré-configurado do subtipo.
+   * Desligado quando várias séries do mesmo dispositivo caem no mesmo subtipo,
+   * para preservar o nome real de cada métrica.
+   */
+  permitirRotuloPreset?: boolean;
 }): MetricBlockItem {
   const {
     serie,
@@ -241,6 +146,7 @@ function construirItemBlocoMetrica(params: {
     dispositivoItem,
     nomeDispositivoExplicito,
     multiplasMetricasAtivas,
+    permitirRotuloPreset = true,
   } = params;
 
   const {
@@ -373,7 +279,9 @@ function construirItemBlocoMetrica(params: {
   let valorExibicao = textoSemValor;
   let icone: string | undefined = preconfig?.icone;
 
-  const nomeMinusculo = nomeExibicaoBruto.toLowerCase();
+  // Usa apenas o nome da MÉTRICA (sem o prefixo do dispositivo) para a detecção automática,
+  // evitando que um dispositivo chamado "CPU" transforme toda métrica em "% de CPU".
+  const nomeMinusculo = (metricaExtraida || nomeExibicaoBruto).toLowerCase();
 
   // =========================================================================
   // MODO A: PRECONFIGURAÇÃO DE DISPOSITIVO OU UNIDADE STANDARD DEFINIDA
@@ -684,6 +592,7 @@ function construirItemBlocoMetrica(params: {
     rotuloMetrica = stdGlobal.displayName.trim();
   } else if (
     subTipoEfetivo &&
+    permitirRotuloPreset &&
     opcoesEfetivas.overrideCardTitleWithPreset !== false &&
     ROTULOS_SUBTIPOS[subTipoEfetivo]
   ) {
@@ -782,11 +691,8 @@ function localizarSerieParaMetrica(
 
   const porPalavraChave = seriesCandidatas.find(
     (s) =>
-      detectarSubTipoMetricaPorTexto(
-        `${s.metricaExtraida} ${s.nomeExibicaoBruto}`,
-        dispositivoAtivo,
-        [metricaAlvo]
-      ) === metricaAlvo
+      detectarSubTipoMetricaPorTexto(s.metricaExtraida, dispositivoAtivo, [metricaAlvo]) ===
+      metricaAlvo
   );
   if (porPalavraChave) {
     return porPalavraChave;
@@ -823,10 +729,8 @@ export function extrairMetricasDosDados(
 
   const dispositivoAtivo = obterDispositivoAtivo(opcoesEfetivas);
   const subTipoUnico = obterSubTipoAtivo(opcoesEfetivas);
-  const emModoMultiplasMetricas = estaEmModoMultiplasMetricas(opcoesEfetivas);
 
   const metricasSelecionadas: AnyDeviceMetricType[] =
-    emModoMultiplasMetricas &&
     Array.isArray(opcoesEfetivas.selectedMetrics) &&
     opcoesEfetivas.selectedMetrics.length > 0
       ? opcoesEfetivas.selectedMetrics.filter((m) => m !== 'auto_device')
@@ -874,17 +778,38 @@ export function extrairMetricasDosDados(
 
   const itens: MetricBlockItem[] = [];
 
+  /** Detecta o subtipo usando apenas o nome da métrica (sem o nome do dispositivo) */
+  const detectarPorNome = (s: SerieExtraidaBruta, candidatas?: AnyDeviceMetricType[]) =>
+    detectarSubTipoMetricaPorTexto(s.metricaExtraida, dispositivoAtivo, candidatas);
+
+  /**
+   * Retorna uma função que indica se o rótulo pré-configurado pode ser usado:
+   * só quando uma única série do mesmo dispositivo corresponde àquele subtipo.
+   */
+  const criarVerificadorRotuloPreset = (
+    pares: Array<{ serie: SerieExtraidaBruta; subtipo: AnyDeviceMetricType | null }>,
+    nomeDispositivoFixo?: string
+  ) => {
+    const chaveDe = (serie: SerieExtraidaBruta, subtipo: string) =>
+      `${nomeDispositivoFixo ?? serie.hostExtraido ?? ''}::${subtipo}`;
+    const contagem = new Map<string, number>();
+    for (const par of pares) {
+      if (par.subtipo) {
+        const chave = chaveDe(par.serie, par.subtipo);
+        contagem.set(chave, (contagem.get(chave) || 0) + 1);
+      }
+    }
+    return (serie: SerieExtraidaBruta, subtipo: AnyDeviceMetricType | null) =>
+      !subtipo || (contagem.get(chaveDe(serie, subtipo)) || 0) <= 1;
+  };
+
   // =========================================================================
   // CENÁRIO 1: USUÁRIO CADASTROU DISPOSITIVOS MONITORADOS (EX: 10+ SERVIDORES)
   // =========================================================================
   if (dispositivosConfigurados.length > 0) {
-    const metricasParaCadaDispositivo: Array<AnyDeviceMetricType | null> =
-      metricasSelecionadas.length > 0
-        ? metricasSelecionadas
-        : [subTipoUnico];
-
     dispositivosConfigurados.forEach((disp, dIdx) => {
       const filtroHost = (disp.hostFilter || disp.name).trim().toLowerCase();
+      const nomeDispositivo = disp.name.trim();
       const seriesDoDispositivo = seriesBrutas.filter(
         (s) =>
           (s.hostExtraido && s.hostExtraido.toLowerCase().includes(filtroHost)) ||
@@ -893,44 +818,61 @@ export function extrairMetricasDosDados(
           s.refId.toLowerCase() === filtroHost
       );
 
-      const poolSeries =
-        seriesDoDispositivo.length > 0 ? seriesDoDispositivo : seriesBrutas;
+      const metricasDesteDispositivo: AnyDeviceMetricType[] = disp.metricOverride
+        ? [disp.metricOverride]
+        : metricasSelecionadas;
 
-      const metricasDesteDispositivo: Array<AnyDeviceMetricType | null> =
-        disp.metricOverride
-          ? [disp.metricOverride]
-          : metricasParaCadaDispositivo;
+      // Sem métricas escolhidas: exibe TODAS as métricas encontradas para este dispositivo
+      if (metricasDesteDispositivo.length === 0) {
+        const pool =
+          seriesDoDispositivo.length > 0
+            ? seriesDoDispositivo
+            : [seriesBrutas[dIdx % seriesBrutas.length]];
+        const pares = pool.map((serie) => ({
+          serie,
+          subtipo: subTipoUnico || detectarPorNome(serie),
+        }));
+        const permitirPreset = criarVerificadorRotuloPreset(pares, nomeDispositivo);
+        pares.forEach((par) => {
+          itens.push(
+            construirItemBlocoMetrica({
+              serie: par.serie,
+              indice: itens.length,
+              dispositivoAtivo,
+              subTipoEfetivo: par.subtipo,
+              opcoesEfetivas,
+              stdGlobal,
+              dispositivoItem: disp,
+              nomeDispositivoExplicito: nomeDispositivo,
+              multiplasMetricasAtivas: pares.length > 1,
+              permitirRotuloPreset: permitirPreset(par.serie, par.subtipo),
+            })
+          );
+        });
+        return;
+      }
+
+      const poolSeries = seriesDoDispositivo.length > 0 ? seriesDoDispositivo : seriesBrutas;
 
       metricasDesteDispositivo.forEach((metricaAlvo, mIdx) => {
-        const serieEscolhida = metricaAlvo
-          ? localizarSerieParaMetrica(
-              poolSeries,
-              metricaAlvo,
-              dispositivoAtivo,
-              opcoesEfetivas.metricStyles,
-              seriesDoDispositivo.length > 0 ? mIdx : dIdx + mIdx
-            )
-          : poolSeries[
-              (seriesDoDispositivo.length > 0 ? mIdx : dIdx) % poolSeries.length
-            ];
-
-        const subTipoResolvido =
-          metricaAlvo ||
-          detectarSubTipoMetricaPorTexto(
-            `${serieEscolhida.metricaExtraida} ${serieEscolhida.nomeExibicaoBruto}`,
-            dispositivoAtivo
-          );
+        const serieEscolhida = localizarSerieParaMetrica(
+          poolSeries,
+          metricaAlvo,
+          dispositivoAtivo,
+          opcoesEfetivas.metricStyles,
+          seriesDoDispositivo.length > 0 ? mIdx : dIdx + mIdx
+        );
 
         itens.push(
           construirItemBlocoMetrica({
             serie: serieEscolhida,
             indice: itens.length,
             dispositivoAtivo,
-            subTipoEfetivo: subTipoResolvido,
+            subTipoEfetivo: metricaAlvo,
             opcoesEfetivas,
             stdGlobal,
             dispositivoItem: disp,
-            nomeDispositivoExplicito: disp.name.trim(),
+            nomeDispositivoExplicito: nomeDispositivo,
             multiplasMetricasAtivas: metricasDesteDispositivo.length > 1,
           })
         );
@@ -941,22 +883,20 @@ export function extrairMetricasDosDados(
   }
 
   // =========================================================================
-  // CENÁRIO 2: MÚLTIPLAS MÉTRICAS SELECIONADAS (SEM LISTA MANUAL DE DISPOSITIVOS)
+  // CENÁRIO 2: MÉTRICAS SELECIONADAS EM "QUAIS MÉTRICAS MONITORAR"
   // =========================================================================
   if (metricasSelecionadas.length > 0) {
     // Tenta casar cada série bruta com uma das métricas selecionadas
     const seriesCasadas: Array<{
       serie: SerieExtraidaBruta;
-      metrica: AnyDeviceMetricType;
+      subtipo: AnyDeviceMetricType;
     }> = [];
 
     for (const s of seriesBrutas) {
       // 1. Verifica filtro customizado no metricStyles
       let metricaEncontrada: AnyDeviceMetricType | null = null;
       for (const m of metricasSelecionadas) {
-        const filtro = opcoesEfetivas.metricStyles?.[m]?.seriesFilter
-          ?.trim()
-          .toLowerCase();
+        const filtro = opcoesEfetivas.metricStyles?.[m]?.seriesFilter?.trim().toLowerCase();
         if (
           filtro &&
           (s.refId.toLowerCase() === filtro ||
@@ -968,29 +908,21 @@ export function extrairMetricasDosDados(
         }
       }
 
-      // 2. Verifica por palavras-chave entre as métricas selecionadas
+      // 2. Verifica por palavras-chave (no nome da métrica) entre as métricas selecionadas
       if (!metricaEncontrada) {
-        metricaEncontrada = detectarSubTipoMetricaPorTexto(
-          `${s.metricaExtraida} ${s.nomeExibicaoBruto}`,
-          dispositivoAtivo,
-          metricasSelecionadas
-        );
+        metricaEncontrada = detectarPorNome(s, metricasSelecionadas);
       }
 
       if (metricaEncontrada) {
-        seriesCasadas.push({ serie: s, metrica: metricaEncontrada });
+        seriesCasadas.push({ serie: s, subtipo: metricaEncontrada });
       }
     }
 
-    // Verifica quais métricas selecionadas já foram atendidas pelas séries casadas
-    const metricasAtendidas = new Set(seriesCasadas.map((sc) => sc.metrica));
-
-    // Se todas as séries casaram com apenas 1 métrica (ex: 10 servidores retornando CPU) e só 1 métrica foi selecionada
-    if (metricasSelecionadas.length === 1 && seriesBrutas.length > 1) {
+    // Nenhuma série reconhecida e só 1 métrica selecionada: assume que todas as séries
+    // são essa mesma métrica vinda de origens diferentes (ex: "Uso de CPU" de 10 servidores)
+    if (metricasSelecionadas.length === 1 && seriesCasadas.length === 0 && seriesBrutas.length > 1) {
       const unicaMetrica = metricasSelecionadas[0];
       seriesBrutas.forEach((s) => {
-        const nomeHost =
-          s.hostExtraido || (seriesBrutas.length > 1 ? s.nomeExibicaoBruto : undefined);
         itens.push(
           construirItemBlocoMetrica({
             serie: s,
@@ -999,7 +931,7 @@ export function extrairMetricasDosDados(
             subTipoEfetivo: unicaMetrica,
             opcoesEfetivas,
             stdGlobal,
-            nomeDispositivoExplicito: nomeHost,
+            nomeDispositivoExplicito: s.hostExtraido || s.nomeExibicaoBruto,
             multiplasMetricasAtivas: true,
           })
         );
@@ -1007,25 +939,23 @@ export function extrairMetricasDosDados(
       return itens;
     }
 
-    // Adiciona todas as séries que casaram com as métricas selecionadas
-    for (const par of seriesCasadas) {
-      const quantasDestaMetrica = seriesCasadas.filter(
-        (p) => p.metrica === par.metrica
-      ).length;
-      const nomeHost =
-        par.serie.hostExtraido ||
-        (quantasDestaMetrica > 1 ? par.serie.nomeExibicaoBruto : undefined);
+    const metricasAtendidas = new Set(seriesCasadas.map((sc) => sc.subtipo));
+    const permitirPreset = criarVerificadorRotuloPreset(seriesCasadas);
+    const multiplas = metricasSelecionadas.length > 1 || seriesCasadas.length > 1;
 
+    // Cada série casada é uma métrica do seu dispositivo (hostExtraido) — nunca um dispositivo novo
+    for (const par of seriesCasadas) {
       itens.push(
         construirItemBlocoMetrica({
           serie: par.serie,
           indice: itens.length,
           dispositivoAtivo,
-          subTipoEfetivo: par.metrica,
+          subTipoEfetivo: par.subtipo,
           opcoesEfetivas,
           stdGlobal,
-          nomeDispositivoExplicito: nomeHost,
-          multiplasMetricasAtivas: true,
+          nomeDispositivoExplicito: par.serie.hostExtraido,
+          multiplasMetricasAtivas: multiplas,
+          permitirRotuloPreset: permitirPreset(par.serie, par.subtipo),
         })
       );
     }
@@ -1060,35 +990,32 @@ export function extrairMetricasDosDados(
   }
 
   // =========================================================================
-  // CENÁRIO 3: MODO PADRÃO (1 MÉTRICA SELECIONADA OU AUTO-DETECÇÃO DE TODAS AS SÉRIES)
+  // CENÁRIO 3: MODO AUTOMÁTICO (TODAS AS SÉRIES DA QUERY)
   // =========================================================================
-  const temMultiplasSeriesParaMesmaMetrica =
-    seriesBrutas.length > 1 && Boolean(subTipoUnico);
+  // Compatibilidade com o seletor legado "panelType" (métrica única aplicada a todas as séries)
+  const temMultiplasSeriesParaMesmaMetrica = seriesBrutas.length > 1 && Boolean(subTipoUnico);
 
-  seriesBrutas.forEach((s) => {
-    const subTipoSerie =
-      subTipoUnico ||
-      detectarSubTipoMetricaPorTexto(
-        `${s.metricaExtraida} ${s.nomeExibicaoBruto}`,
-        dispositivoAtivo
-      );
+  const pares = seriesBrutas.map((serie) => ({
+    serie,
+    subtipo: subTipoUnico || detectarPorNome(serie),
+  }));
+  const permitirPreset = criarVerificadorRotuloPreset(pares);
 
-    // Se houver múltiplas séries para a mesma métrica (ex: 10 servidores monitorando Uso de CPU),
-    // preserva o nome de cada servidor em deviceName para identificá-los individualmente no card!
+  pares.forEach(({ serie: s, subtipo }) => {
     const nomeHost =
-      s.hostExtraido ||
-      (temMultiplasSeriesParaMesmaMetrica ? s.nomeExibicaoBruto : undefined);
+      s.hostExtraido || (temMultiplasSeriesParaMesmaMetrica ? s.nomeExibicaoBruto : undefined);
 
     itens.push(
       construirItemBlocoMetrica({
         serie: s,
         indice: itens.length,
         dispositivoAtivo,
-        subTipoEfetivo: subTipoSerie,
+        subTipoEfetivo: subtipo,
         opcoesEfetivas,
         stdGlobal,
         nomeDispositivoExplicito: nomeHost,
-        multiplasMetricasAtivas: emModoMultiplasMetricas,
+        multiplasMetricasAtivas: seriesBrutas.length > 1,
+        permitirRotuloPreset: permitirPreset(s, subtipo),
       })
     );
   });
